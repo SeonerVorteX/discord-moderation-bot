@@ -1,0 +1,34 @@
+{
+  "name": "vortex-moderation",
+  "version": "1.0.0",
+  "description": "Gelişmiş Moderasyon Botu",
+  "main": "vortex.js",
+  "scripts": {
+    "test": "node vortex.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeonerVorteX/discord-moderation-bot.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "SeonerVorteX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SeonerVorteX/discord-moderation-bot/issues"
+  },
+  "homepage": "https://github.com/SeonerVorteX/discord-moderation-bot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "fs": "0.0.1-security",
+    "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2",
+    "mongoose": "^5.13.7",
+    "ms": "^2.1.3",
+    "table": "^6.7.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0"
+  }
+}
