@@ -1,3 +1,9 @@
+# 📌 Görseller
+<img src="https://media.discordapp.net/attachments/836467887928639498/892154099414482995/unknown.png">
+<img src="https://media.discordapp.net/attachments/836467887928639498/892154477719740437/unknown.png">
+<img src="https://media.discordapp.net/attachments/836467887928639498/892158116404269106/unknown.png">
+<img src="https://media.discordapp.net/attachments/836467887928639498/892161948114911262/unknown.png">
+
 # ✨ Kurulum
 ### Projeyi botunuzda kullanmak için bazı işlemler yapmanız gerekiyor. Aşağıdaki yönlendirmeleri takip ederek bunu yapabilirsiniz :
 * Herkesin bildiği gibi ilk önce bilgisayarınıza [Node JS](https://nodejs.org/tr/) ve ayarları daha rahat yapa bilmek için bir editör *(Örneğin [Visual Studio Code](https://code.visualstudio.com/))* indirmeniz gerekiyor.

@@ -47,7 +47,7 @@ module.exports = {
 **Ceza ID :** \`#${penal.id}\`
 **Yasaklanan Kullanıcı :** \`${bannedUser.user.tag} (${bannedUser.user.id})\`
 **Yasaklayan Yetkili :** \`${client.users.cache.get(penal.staffID).tag} (${client.users.cache.get(penal.staffID).id})\`
-**Yasaklanma Tarihi :** <t:${penal.date}>
+**Yasaklanma Tarihi :** ${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}
 **Yasaklanma Sebebi :** \`${!penal.reason ? 'Belirtilmedi!' : penal.reason}\`     
                 `), { react: true });
 
@@ -59,7 +59,7 @@ module.exports = {
 **Ceza ID :** \`#${penal.id}\`
 **Yasaklanan Kullanıcı :** \`${bannedUser.user.tag} (${bannedUser.user.id})\`
 **Yasaklayan Yetkili :** \`${client.users.cache.get(penal.staffID).tag} (${client.users.cache.get(penal.staffID).id})\`
-**Yasaklanma Tarihi :** <t:${penal.date}>
+**Yasaklanma Tarihi :** ${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}
 **Yasaklanma Sebebi :** \`${!penal.reason ? 'Belirtilmedi!' : penal.reason}\`     
                 `), { react: true });
 

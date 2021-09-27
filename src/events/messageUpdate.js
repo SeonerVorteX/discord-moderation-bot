@@ -13,7 +13,7 @@ module.exports = async (oldMessage, newMessage) => {
     if(oldMessage.content == newMessage.content) return;
     if(newMessage.content.toLowerCase().startsWith(`${Prefix}eval`) || oldMessage.content.toLowerCase().startsWith(`${Prefix}sil`) || newMessage.content.toLowerCase().startsWith(`${Prefix}sil`)) return;
 
-    let Embed = embed('Mesaj Silindi', newMessage.guild.iconURL({ dynamic: true }), false);
+    let Embed = embed('Mesaj Düzenlendi', newMessage.guild.iconURL({ dynamic: true }), false);
     let channel = newMessage.guild.channels.cache.get(messageLog);
 
     if(messageLog && channel && channel.type == 'text') channel.send(

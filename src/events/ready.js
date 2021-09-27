@@ -32,12 +32,12 @@ module.exports = async () => {
 //Voice 
     let channel = client.channels.cache.get(VoiceChannel);
     
-    if (!channel) console.log(`[VOICE-ERROR] Voice Channel Not Found`);
+    if (!channel) console.log(`[VOICE] Voice Channel Not Found`);
     else channel.join().then(connection => console.log(`[VOICE] Connected To The Voice Channel`)).catch(err => console.log(`[VOICE] Could Not Connect To Voice Channel`));
     
     setInterval(() => {
         
-        channel.join().then(connection => console.log(`[VOICE-REFRESH] Connection On Voice Channel Has Been Refreshed`)).catch(err => console.log(`[VOICE] Could Not Refresh Connection On Voice Channel`));
+        if(channel) channel.join().then(connection => console.log(`[VOICE] Connection On Voice Channel Has Been Refreshed`)).catch(err => console.log(`[VOICE] Could Not Refresh Connection On Voice Channel`));
         
     }, 600000);
 

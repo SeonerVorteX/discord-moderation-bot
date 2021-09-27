@@ -8,7 +8,7 @@ moment.locale('tr');
 module.exports = {
     name: 'üyebilgi',
     aliases: ['kullanıcıbilgi', 'kb'],
-    category: 'Yetkili',
+    category: 'Bilgi',
     usage: '<@Üye/ID>',
     staff: true,
     guildOnly: true,

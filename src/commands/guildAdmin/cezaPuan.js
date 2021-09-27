@@ -7,7 +7,7 @@ module.exports = {
     name: 'cezapuan',
     aliases: ['puan'],
     category: 'Admin',
-    usage: '<@Üye/ID> / [ekle / sil]',
+    usage: '[<@Üye/ID> / (ekle / sil)]',
     permission: 'ADMINISTRATOR',
     guildOnly: true, 
     cooldown: 3,
@@ -65,7 +65,7 @@ module.exports = {
 
             let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
-            if(!user) return message.channel.error(message, `${mark ? mark : ``}  Doğru kullanım : \`${Prefix}cezapuan <@Üye/ID> / ( ekle / sil )\``, { timeout: 8000, reply: true, react: true });
+            if(!user) return message.channel.error(message, `${mark ? mark : ``}  Doğru kullanım : \`${Prefix}cezapuan <@Üye/ID> / (ekle / sil)\``, { timeout: 8000, reply: true, react: true });
 
             let data = await penalPoints.findOne({ guildID: message.guild.id, userID: user.id });
             message.channel.success(message, `\`${user.displayName}\` Üyesinin Ceza Puanı : **${data && data.penalPoint ? data.penalPoint : 0}**`, { react: true });
