@@ -1,69 +1,69 @@
 module.exports = {
-	name: 'git',
-	aliases: [],
-	category: 'Kullanıcı',
-	usage: '<@Üye/ID>',
-	guildOnly: true,
-	cooldown: 5,
+    name: 'git',
+    aliases: [],
+    category: 'Kullanıcı',
+    usage: '<@Üye/ID>',
+    guildOnly: true,
+    cooldown: 5,
 
-	/**
-     * @param { Client } client
-     * @param { Message } message
+    /**
+     * @param { Client } client 
+     * @param { Message } message 
      * @param { Array<String> } args
      * @param { MessageEmbed } Embed
      */
 
-	execute(client, message, args, Embed) {
+    execute(client, message, args, Embed) {
 
-		const user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
+        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
-		if(!message.member.voice.channel) return message.channel.error(message, 'Bir ses kanalında olmalısın!', { timeout: 10000, reply: true, react: true, keepMessage: true });
-		if(!args[0]) return message.channel.error(message, 'Bir üye belirtmelisin!', { timeout: 10000, reply: true, react: true, keepMessage: true });
-		if(!user) return message.channel.error(message, 'Geçerli bir üye belirtmelisn!', { timeout: 10000, reply: true, react: true, keepMessage: true });
-		if(user.id == message.author.id) return message.channel.error(message, 'Bu işlemi kendine uygulayamazsın!', { timeout: 10000, reply: true, react: true, keepMessage: true });
-		if(!user.voice.channel) return message.channel.error(message, 'Belirttiğin kullanıcı bir ses kanalında değil!', { timeout: 10000, reply: true, react: true, keepMessage: true });
-		if(user.voice.channel.id == message.member.voice.channel.id) return message.channel.error(message, 'Belittiğin üye ile zaten aynı ses kanalındasın!', { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(!message.member.voice.channel) return message.channel.error(message, `Bir ses kanalında olmalısın!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(!args[0]) return message.channel.error(message, `Bir üye belirtmelisin!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(!user) return message.channel.error(message, `Geçerli bir üye belirtmelisn!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(user.id == message.author.id) return message.channel.error(message, `Bu işlemi kendine uygulayamazsın!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(!user.voice.channel) return message.channel.error(message, `Belirttiğin kullanıcı bir ses kanalında değil!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(user.voice.channel.id == message.member.voice.channel.id) return message.channel.error(message, `Belittiğin üye ile zaten aynı ses kanalındasın!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
 
-		message.channel.send(`${user.toString()}`, Embed.setDescription(`${message.member.toString()} kullanıcısı bulunduğun ( \`${user.voice.channel.name}\` ) ses kanalına gelmek istiyor. Kabul ediyormusun?`)).then(async msg => {
+        message.channel.send(`${user.toString()}`, Embed.setDescription(`${message.member.toString()} kullanıcısı bulunduğun ( \`${user.voice.channel.name}\` ) ses kanalına gelmek istiyor. Kabul ediyormusun?`)).then(async msg => {
 
-			const reactions = ['✅', '❌'];
-			for (const reaction of reactions) await msg.react(reaction);
+            let reactions = ['✅', '❌'];
+            for (let reaction of reactions) await msg.react(reaction);
 
-			const accept = msg.createReactionCollector((reaction, user) => reaction.emoji.name == '✅' && user.id == user.id, { time: 25000 });
-			const deny = msg.createReactionCollector((reaction, user) => reaction.emoji.name == '❌' && user.id == user.id, { time: 25000 });
+            const accept = msg.createReactionCollector((reaction, user) => reaction.emoji.name == "✅" && user.id == user.id, { time: 25000 });
+            const deny = msg.createReactionCollector((reaction, user) => reaction.emoji.name == "❌" && user.id == user.id, { time: 25000 });
 
-			accept.on('collect', async reaction => {
+            accept.on("collect", async reaction => {
+           
+                accept.stop();
+                deny.stop();
+                msg.reactions.removeAll();
 
-				accept.stop();
-				deny.stop();
-				msg.reactions.removeAll();
+                await msg.edit(``, Embed.setDescription(`${user.toString()} kullanıcısı \`${user.voice.channel.name}\` isimli ses kanalına gelme isteğini kabul etti!`));
+                return await message.member.voice.setChannel(user.voice.channel.id);
+                
+            });
 
-				await msg.edit('', Embed.setDescription(`${user.toString()} kullanıcısı \`${user.voice.channel.name}\` isimli ses kanalına gelme isteğini kabul etti!`));
-				return await message.member.voice.setChannel(user.voice.channel.id);
+            deny.on("collect", async reaction => {
 
-			});
+                accept.stop();
+                deny.stop();
+                msg.reactions.removeAll();
+                
+                return await msg.edit(`${message.member.toString()}`, Embed.setDescription(`${user.toString()} kullanıcısı \`${user.voice.channel.name}\` isimli ses kanalına gelme isteğini redd etti!`));
 
-			deny.on('collect', async reaction => {
+            });
 
-				accept.stop();
-				deny.stop();
-				msg.reactions.removeAll();
+            accept.on("end", async reaction => {
 
-				return await msg.edit(`${message.member.toString()}`, Embed.setDescription(`${user.toString()} kullanıcısı \`${user.voice.channel.name}\` isimli ses kanalına gelme isteğini redd etti!`));
+                accept.stop();
+                deny.stop();
+                msg.reactions.removeAll();
 
-			});
+                return await msg.edit(`${message.member.toString()}`, Embed.setDescription(`${user.toString()} kullanıcısı yanıt vermediği için istek redd edildi!`));
 
-			accept.on('end', async reaction => {
+            });
 
-				accept.stop();
-				deny.stop();
-				msg.reactions.removeAll();
+        });
 
-				return await msg.edit(`${message.member.toString()}`, Embed.setDescription(`${user.toString()} kullanıcısı yanıt vermediği için istek redd edildi!`));
-
-			});
-
-		});
-
-	},
+    },
 };

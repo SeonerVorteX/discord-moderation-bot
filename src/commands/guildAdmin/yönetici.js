@@ -3,311 +3,303 @@ const { mark, loading, success } = require('../../configs/emojis.json');
 const administrators = require('../../schemas/administrators.js');
 
 module.exports = {
-	name: 'yönetici',
-	aliases: ['yt'],
-	category: 'Admin',
-	usage: '[aç / kapat / al / ver / bilgi ( üye / bot )]',
-	guildOwner: true,
-	guildOnly: true,
+    name: 'yönetici',
+    aliases: ['yt'],
+    category: 'Admin',
+    usage: '[aç / kapat / al / ver / bilgi ( üye / bot )]',
+    guildOwner: true,
+    guildOnly: true,
 
-	/**
-     * @param { Client } client
-     * @param { Message } message
-     * @param { Array<String> } args
-     * @param { MessageEmbed } Embed
+    /**
+     * @param { Client } client 
+     * @param { Message } message 
+     * @param { Array<String> } args 
+     * @param { MessageEmbed } Embed 
      */
 
-	async execute(client, message, args, Embed) {
+    async execute(client, message, args, Embed) {
 
-		if(!args[0]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici  aç / kapat / al / ver / bilgi ( üye / bot )\``), { timeout: 15000, react: true });
+        if(!args[0]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici  aç / kapat / al / ver / bilgi ( üye / bot )\``), { timeout: 15000, react: true });
 
-		if(['al'].some(arg => args[0].toLocaleLowerCase() == arg)) {
+        if(['al'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
-			const user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
-			const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-			const reason = args.slice(2).join(' ');
+            let user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
+            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
+            let reason = args.slice(2).join(' ');
 
-			if(!args[1]) return message.channel.error(message, Embed.setDescription('Bir üye veya rol belirtmelisin!'), { timeout: 8000, react: true });
-			if(!user && !role) return message.channel.error(message, Embed.setDescription('Geçerli bir üye veya rol belirtmelisin!'), { timeout: 8000, react: true });
+            if(!args[1]) return message.channel.error(message, Embed.setDescription(`Bir üye veya rol belirtmelisin!`), { timeout: 8000, react: true });
+            if(!user && !role) return message.channel.error(message, Embed.setDescription(`Geçerli bir üye veya rol belirtmelisin!`), { timeout: 8000, react: true });
 
-			if(user) {
+            if(user) {
 
-				if(!user.hasPermission(8)) return message.channel.error(message, Embed.setDescription('Belirttiğin üye yönetici yetkisine sahip değil!'), { timeout: 8000, react: true });
-				if(!user.manageable) return message.channel.error(message, Embed.setDescription('Belirttiğin üyenin yönetici yetkisini alamıyorum!'), { timeout: 8000, react: true });
+                if(!user.hasPermission(8)) return message.channel.error(message, Embed.setDescription(`Belirttiğin üye yönetici yetkisine sahip değil!`), { timeout: 8000, react: true });
+                if(!user.manageable) return message.channel.error(message, Embed.setDescription(`Belirttiğin üyenin yönetici yetkisini alamıyorum!`), { timeout: 8000, react: true });
 
-				const roles = user.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position) || role.editable));
+                let roles = user.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position) || role.editable));
 
-				if(roles.size == 0 && !user.user.bot) return message.channel.error(message, Embed.setDescription('Belirttiğin üyenin yönetici yetkisini alamıyorum!'), { timeout: 8000, react: true });
+                if(roles.size == 0 && !user.user.bot) return message.channel.error(message, Embed.setDescription(`Belirttiğin üyenin yönetici yetkisini alamıyorum!`), { timeout: 8000, react: true });
 
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`${user.toString()} isimli ${user.user.bot ? 'botun' : 'üyenin'} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ''} **alınıyor** ${loading ? loading : ''} `)).then(async msg => {
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **alınıyor** ${loading ? loading : ``} `)).then(async msg => {
 
-					let index = 0;
-					await new Promise(async (resolve) => {
+                    let index = 0;
+                    await new Promise(async (resolve) => {
 
-						await roles.forEach(async role => {
+                        await roles.forEach(async role => {
 
-							index += 1;
-							await client.wait(index * 400);
-							await administrators.findOneAndUpdate({ guildID: message.guild.id, userID: user.id, reason: !reason ? 'Belirtilmedi!' : reason, type: user.user.bot ? 'BOT' : 'MEMBER' }, { $push: { userRoles: role.id } }, { upsert: true });
+                            index += 1;
+                            await client.wait(index * 400);
+                            await administrators.findOneAndUpdate({ guildID: message.guild.id, userID: user.id, reason: !reason ? 'Belirtilmedi!' : reason, type: user.user.bot ? 'BOT' : 'MEMBER' }, { $push: { userRoles: role.id } }, { upsert: true });
+                            
+                            if(user.user.bot) user.roles.remove(role.id).catch(err => role.setPermissions(0));
+                            else user.roles.remove(role.id);
 
-							if(user.user.bot) user.roles.remove(role.id).catch(err => role.setPermissions(0));
-							else user.roles.remove(role.id);
+                        });
 
-						});
+                        await client.wait(roles.size * 1000).then(() => resolve());
+                        msg.edit(Embed.setDescription(`${success ? success : ``} ${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **alındı!**`));
 
-						await client.wait(roles.size * 1000).then(() => resolve());
-						msg.edit(Embed.setDescription(`${success ? success : ''} ${user.toString()} isimli ${user.user.bot ? 'botun' : 'üyenin'} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ''} **alındı!**`));
+                    });
 
-					});
+                });
+                
+            } else if(role) {
 
-				});
+                if(role.members.size == 1 && role.members.first().user.bot) return message.channel.error(message, Embed.setDescription(`Public bir rol belirtmelisin!`), { timeout: 8000, react: true });
+                if(!role.permissions.has(8)) return message.channel.error(message, Embed.setDescription(`Belirttiğin rol yönetici yetkisine sahip değil!`), { timeout: 8000, react: true });
+                if(!role.editable) return message.channel.error(message, Embed.setDescription(`Belirttiğin rolün yönetici yetkisini alamıyorum!`), { timeout: 8000, react: true });
 
-			}
-			else if(role) {
+                let members = role.members;
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`${role.toString()} adlı roldeki üyelerin yönetici yetkisi ${reason ? `\`${reason} nedeniyle\`` : ``} **alınıyor** ${loading ? loading : ``} `)).then(async msg => {
 
-				if(role.members.size == 1 && role.members.first().user.bot) return message.channel.error(message, Embed.setDescription('Public bir rol belirtmelisin!'), { timeout: 8000, react: true });
-				if(!role.permissions.has(8)) return message.channel.error(message, Embed.setDescription('Belirttiğin rol yönetici yetkisine sahip değil!'), { timeout: 8000, react: true });
-				if(!role.editable) return message.channel.error(message, Embed.setDescription('Belirttiğin rolün yönetici yetkisini alamıyorum!'), { timeout: 8000, react: true });
+                    let index = 0;
+                    await new Promise(async (resolve) => {
 
-				const members = role.members;
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`${role.toString()} adlı roldeki üyelerin yönetici yetkisi ${reason ? `\`${reason} nedeniyle\`` : ''} **alınıyor** ${loading ? loading : ''} `)).then(async msg => {
+                        members.forEach(async member => {
 
-					const index = 0;
-					await new Promise(async (resolve) => {
+                            await client.wait(index * 400);
+                            await administrators.findOneAndUpdate({ guildID: message.guild.id, roleID: role.id, reason: !reason ? 'Belirtilmedi!' : reason, type: "ROLE" }, { $push: { roleMembers: member.user.id } }, { upsert: true });
+                            member.roles.remove(role.id);
 
-						members.forEach(async member => {
+                        });
 
-							await client.wait(index * 400);
-							await administrators.findOneAndUpdate({ guildID: message.guild.id, roleID: role.id, reason: !reason ? 'Belirtilmedi!' : reason, type: 'ROLE' }, { $push: { roleMembers: member.user.id } }, { upsert: true });
-							member.roles.remove(role.id);
+                        await client.wait(members.size * 1000).then(() => resolve());
 
-						});
+                    });
+                    msg.edit(Embed.setDescription(`${success ? success : ``} ${role.toString()} adlı roldeki üyelerin yönetici yetkisi ${reason ? `\`${reason} nedeniyle\`` : ``} **alındı!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
 
-						await client.wait(members.size * 1000).then(() => resolve());
+                });
 
-					});
-					msg.edit(Embed.setDescription(`${success ? success : ''} ${role.toString()} adlı roldeki üyelerin yönetici yetkisi ${reason ? `\`${reason} nedeniyle\`` : ''} **alındı!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
+            };
 
-				});
+        } else if(['ver'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
-			}
+            let user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
+            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
+            let reason = args.slice(2).join(' ');
 
-		}
-		else if(['ver'].some(arg => args[0].toLocaleLowerCase() == arg)) {
+            if(!args[1]) return message.channel.error(message, Embed.setDescription(`Bir üye veya rol belirtmelisin!`), { timeout: 8000, react: true });
+            if(!user && !role) return message.channel.error(message, Embed.setDescription(`Geçerli bir üye veya rol belirtmelisin!`), { timeout: 8000, react: true });
 
-			const user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
-			const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-			const reason = args.slice(2).join(' ');
 
-			if(!args[1]) return message.channel.error(message, Embed.setDescription('Bir üye veya rol belirtmelisin!'), { timeout: 8000, react: true });
-			if(!user && !role) return message.channel.error(message, Embed.setDescription('Geçerli bir üye veya rol belirtmelisin!'), { timeout: 8000, react: true });
+            if(user) {
 
+                if(user.hasPermission(8)) return message.channel.error(message, Embed.setDescription(`Belirttiğin üye zaten yönetici yetkisine sahip!`), { timeout: 8000, react: true });
+                if(!user.manageable) return message.channel.error(message, Embed.setDescription(`Belirttiğin üyeye yönetici yetkisi veremiyorum!`), { timeout: 8000, react: true });
 
-			if(user) {
+                let data = await administrators.findOne({ guildID: message.guild.id, userID: user.id, type: user.user.bot ? 'BOT' : 'MEMBER' });
 
-				if(user.hasPermission(8)) return message.channel.error(message, Embed.setDescription('Belirttiğin üye zaten yönetici yetkisine sahip!'), { timeout: 8000, react: true });
-				if(!user.manageable) return message.channel.error(message, Embed.setDescription('Belirttiğin üyeye yönetici yetkisi veremiyorum!'), { timeout: 8000, react: true });
+                if(!data) return message.channel.error(message, Embed.setDescription(`Veritabanında bu üyeye ait bir veri bulunamadı!`), { timeout: 8000, react: true });
 
-				const data = await administrators.findOne({ guildID: message.guild.id, userID: user.id, type: user.user.bot ? 'BOT' : 'MEMBER' });
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **geri veriliyor** ${loading ? loading : ``} `)).then(async msg => {
 
-				if(!data) return message.channel.error(message, Embed.setDescription('Veritabanında bu üyeye ait bir veri bulunamadı!'), { timeout: 8000, react: true });
+                    await new Promise(async (resolve) => {
 
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`${user.toString()} isimli ${user.user.bot ? 'botun' : 'üyenin'} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ''} **geri veriliyor** ${loading ? loading : ''} `)).then(async msg => {
+                        await data.userRoles.forEach(async (userRole, index) => {
 
-					await new Promise(async (resolve) => {
+                            await client.wait(index * 400);
+                            userRole = message.guild.roles.cache.get(userRole);
 
-						await data.userRoles.forEach(async (userRole, index) => {
+                            if(!userRole) return;
+                            if(user.user.bot && userRole.members.size == 1 && userRole.members.first().user.bot) await userRole.setPermissions(8);
+                            else {
+                                if(!userRole.permissions.has(8)) await userRole.setPermissions(8);
+                                await user.roles.add(userRole);
+                            };
 
-							await client.wait(index * 400);
-							userRole = message.guild.roles.cache.get(userRole);
+                        });
 
-							if(!userRole) return;
-							if(user.user.bot && userRole.members.size == 1 && userRole.members.first().user.bot) {await userRole.setPermissions(8);}
-							else {
-								if(!userRole.permissions.has(8)) await userRole.setPermissions(8);
-								await user.roles.add(userRole);
-							}
+                        await client.wait(data.userRoles.length * 1000).then(() => resolve());
+                        await administrators.findOneAndDelete({ guildID: message.guild.id, userID: user.id, type: user.user.bot ? 'BOT' : 'MEMBER' });
+                        msg.edit(Embed.setDescription(`${success ? success : ``} ${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **geri verildi!**`));
 
-						});
+                    });
 
-						await client.wait(data.userRoles.length * 1000).then(() => resolve());
-						await administrators.findOneAndDelete({ guildID: message.guild.id, userID: user.id, type: user.user.bot ? 'BOT' : 'MEMBER' });
-						msg.edit(Embed.setDescription(`${success ? success : ''} ${user.toString()} isimli ${user.user.bot ? 'botun' : 'üyenin'} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ''} **geri verildi!**`));
+                });
 
-					});
+            } else if(role) {
 
-				});
+                if(role.members.size == 1 && role.members.first().user.bot) return message.channel.error(message, `Public bir rol belirtmelisin!`, { timeout: 8000, react: true });
+                if(!role.editable) return message.channel.error(message, Embed.setDescription(`Belirttiğin rolün yönetici yetkisini alamıyorum!`), { timeout: 8000, react: true });
 
-			}
-			else if(role) {
+                let data = await administrators.findOne({ guildID: message.guild.id, roleID: role.id, type: 'ROLE' });
 
-				if(role.members.size == 1 && role.members.first().user.bot) return message.channel.error(message, 'Public bir rol belirtmelisin!', { timeout: 8000, react: true });
-				if(!role.editable) return message.channel.error(message, Embed.setDescription('Belirttiğin rolün yönetici yetkisini alamıyorum!'), { timeout: 8000, react: true });
+                if(!data) return message.channel.error(message, Embed.setDescription(`Veritabanında bu role ait bir veri bulunamadı!`), { timeout: 8000, react: true });
 
-				const data = await administrators.findOne({ guildID: message.guild.id, roleID: role.id, type: 'ROLE' });
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`${role.toString()} adlı yönetici rolü ${reason ? `\`${reason}\` nedeniyle` : ``} üyelerine **geri veriliyor** ${loading ? loading : ``} `)).then(async msg => {
 
-				if(!data) return message.channel.error(message, Embed.setDescription('Veritabanında bu role ait bir veri bulunamadı!'), { timeout: 8000, react: true });
+                    let index = 0;
+                    await new Promise(async (resolve) => {
 
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`${role.toString()} adlı yönetici rolü ${reason ? `\`${reason}\` nedeniyle` : ''} üyelerine **geri veriliyor** ${loading ? loading : ''} `)).then(async msg => {
+                        data.roleMembers.forEach(async member => {
 
-					let index = 0;
-					await new Promise(async (resolve) => {
+                            index += 1;
+                            await client.wait(index * 400);
+                            member = message.guild.members.cache.get(member);
 
-						data.roleMembers.forEach(async member => {
+                            if(!member) return;
 
-							index += 1;
-							await client.wait(index * 400);
-							member = message.guild.members.cache.get(member);
+                            await member.roles.add(role.id);
 
-							if(!member) return;
+                        });
 
-							await member.roles.add(role.id);
+                        if(!role.permissions.has(8)) role.setPermissions(8);
 
-						});
+                        await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: 'ROLE' });
+                        await client.wait(members.size * 1000).then(() => resolve());
 
-						if(!role.permissions.has(8)) role.setPermissions(8);
+                    });
+                    msg.edit(Embed.setDescription(`${success ? success : ``} ${role.toString()} adlı yönetici rolü ${reason ? `\`${reason}\` nedeniyle` : ``} üyelerine **geri verildi!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
 
-						await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: 'ROLE' });
-						await client.wait(members.size * 1000).then(() => resolve());
+                });
 
-					});
-					msg.edit(Embed.setDescription(`${success ? success : ''} ${role.toString()} adlı yönetici rolü ${reason ? `\`${reason}\` nedeniyle` : ''} üyelerine **geri verildi!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
+            };
 
-				});
+        } else if(['kapat'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
-			}
+            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
+            let reason = args.slice(2).join(' ');
 
-		}
-		else if(['kapat'].some(arg => args[0].toLocaleLowerCase() == arg)) {
+            if(!args[1]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici kapat ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+            if(!role && !['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici kapat ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+            
+            if(role) {
+            
+                if(!role.permissions.has(8)) return message.channel.error(message, Embed.setDescription(`Belirttiğin rol zaten yönetici yetkisine sahip değil!`), { timeout: 8000, react: true });
+                
+                await new administrators({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE", reason: !reason ? `Belirtilmedi!` : reason }).save();
+                await role.setPermissions(0);
+                message.channel.success(message, Embed.setDescription(`${role.toString()} adlı rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **kapatıldı!** Rolde toplam **${role.members.size}** kişi bulunuyor!`), { react: true });
 
-			const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-			const reason = args.slice(2).join(' ');
+            } else if(['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) {
 
-			if(!args[1]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici kapat ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
-			if(!role && !['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici kapat ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+                let index = 0;
+                let members = message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable));
+                
+                if(members.size == 0) return message.channel.error(message, Embed.setDescription(`Sunucuda yönetici yetkisi kapatıla bilecek herhangi bir rol bulunmuyor!`), { timeout: 8000, react: true });
+                
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`Sunucudaki **${members.size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **kapatılıyor** ${loading ? loading : ``} `)).then(async msg => {
 
-			if(role) {
+                    await new Promise(async (resolve) => {
 
-				if(!role.permissions.has(8)) return message.channel.error(message, Embed.setDescription('Belirttiğin rol zaten yönetici yetkisine sahip değil!'), { timeout: 8000, react: true });
+                        await message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).forEach(async role => {
 
-				await new administrators({ guildID: message.guild.id, roleID: role.id, type: 'CLOSED-ROLE', reason: !reason ? 'Belirtilmedi!' : reason }).save();
-				await role.setPermissions(0);
-				message.channel.success(message, Embed.setDescription(`${role.toString()} adlı rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **kapatıldı!** Rolde toplam **${role.members.size}** kişi bulunuyor!`), { react: true });
+                            index += 1;
+                            await client.wait(index * 400);
+                            await new administrators({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE", reason: !reason ? `Belirtilmedi!` : reason }).save();
+                            await role.setPermissions(0);
 
-			}
-			else if(['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) {
+                        });
 
-				let index = 0;
-				const members = message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable));
+                        await client.wait(message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).size * 1000).then(() => resolve());
 
-				if(members.size == 0) return message.channel.error(message, Embed.setDescription('Sunucuda yönetici yetkisi kapatıla bilecek herhangi bir rol bulunmuyor!'), { timeout: 8000, react: true });
+                    });
+                    msg.edit(Embed.setDescription(`${success ? success : ``} Sunucudaki **${members.size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **kapatıldı!**`));
 
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`Sunucudaki **${members.size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **kapatılıyor** ${loading ? loading : ''} `)).then(async msg => {
+                });
 
-					await new Promise(async (resolve) => {
+            };
 
-						await message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).forEach(async role => {
+        } else if(['aç'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
-							index += 1;
-							await client.wait(index * 400);
-							await new administrators({ guildID: message.guild.id, roleID: role.id, type: 'CLOSED-ROLE', reason: !reason ? 'Belirtilmedi!' : reason }).save();
-							await role.setPermissions(0);
+            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
+            let reason = args.slice(2).join(' ');
 
-						});
+            if(!args[1]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici aç ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+            if(!role && !['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici aç ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+            
+            if(role) {
 
-						await client.wait(message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).size * 1000).then(() => resolve());
+                if(role.permissions.has(8)) return message.channel.error(message, Embed.setDescription(`Belirttiğin rol zaten yönetici yetkisine sahip!`), { timeout: 8000, react: true });
+                let data = await administrators.findOne({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE" });
 
-					});
-					msg.edit(Embed.setDescription(`${success ? success : ''} Sunucudaki **${members.size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **kapatıldı!**`));
+                if(!data) return message.channel.error(message, Embed.setDescription(`Veritabanında belirttiğin role ait herhangi bir veri bulunamadı!`), { timeout: 8000, react: true });
 
-				});
+                await role.setPermissions(8);
+                await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE" });
+                message.channel.success(message, Embed.setDescription(`${role.toString()} adlı rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **açıldı!** Rolde toplam **${role.members.size}** kişi bulunuyor!`), { react: true });
 
-			}
+            } else if(['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) {
 
-		}
-		else if(['aç'].some(arg => args[0].toLocaleLowerCase() == arg)) {
+                let datas = await administrators.find({ guildID: message.guild.id, type: "CLOSED-ROLE" });
 
-			const role = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
-			const reason = args.slice(2).join(' ');
+                if(!datas.length) return message.channel.error(message, Embed.setDescription(`Veritabanında yönetici yetkisi kapatılmış herhangi bir rol verisi bulunamadı!`), { timeout: 8000, react: true });
 
-			if(!args[1]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici aç ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
-			if(!role && !['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici aç ( <@Rol/ID> / hepsi )\``), { timeout: 15000, react: true });
+                let size = 0;
+                if(mark) message.react(mark);
+                message.channel.send(Embed.setDescription(`Sunucudaki **${datas.length}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **açılıyor** ${loading ? loading : ``} `)).then(async msg => { 
 
-			if(role) {
+                    await new Promise(async (resolve) => { 
+                        
+                        datas.forEach(async (data, index) => {
 
-				if(role.permissions.has(8)) return message.channel.error(message, Embed.setDescription('Belirttiğin rol zaten yönetici yetkisine sahip!'), { timeout: 8000, react: true });
-				const data = await administrators.findOne({ guildID: message.guild.id, roleID: role.id, type: 'CLOSED-ROLE' });
+                            await client.wait(index * 400);
+                            let role = message.guild.roles.cache.get(data.roleID);
 
-				if(!data) return message.channel.error(message, Embed.setDescription('Veritabanında belirttiğin role ait herhangi bir veri bulunamadı!'), { timeout: 8000, react: true });
+                            if(!role || role.position >= message.guild.members.cache.get(client.user.id).roles.highest.position) return;
 
-				await role.setPermissions(8);
-				await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: 'CLOSED-ROLE' });
-				message.channel.success(message, Embed.setDescription(`${role.toString()} adlı rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **açıldı!** Rolde toplam **${role.members.size}** kişi bulunuyor!`), { react: true });
+                            size += 1;
+                            await role.setPermissions(8);
+                            await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE" });
 
-			}
-			else if(['hepsi', 'all'].some(arg => args[1].toLocaleLowerCase() == arg)) {
+                        });
+                        await client.wait(datas.length * 1000).then(() => resolve());
+                        msg.edit(Embed.setDescription(`${success ? success : ``} Sunucudaki **${size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **açıldı!**`));
+                        
+                    });
 
-				const datas = await administrators.find({ guildID: message.guild.id, type: 'CLOSED-ROLE' });
 
-				if(!datas.length) return message.channel.error(message, Embed.setDescription('Veritabanında yönetici yetkisi kapatılmış herhangi bir rol verisi bulunamadı!'), { timeout: 8000, react: true });
+                });
 
-				let size = 0;
-				if(mark) message.react(mark);
-				message.channel.send(Embed.setDescription(`Sunucudaki **${datas.length}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **açılıyor** ${loading ? loading : ''} `)).then(async msg => {
+            };
 
-					await new Promise(async (resolve) => {
+        } else if(['bilgi', 'info'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
-						datas.forEach(async (data, index) => {
+            if(args[1] && ['bot'].some(arg => args[1].toLocaleLowerCase() == arg)) {
 
-							await client.wait(index * 400);
-							const role = message.guild.roles.cache.get(data.roleID);
+                let roles = message.guild.roles.cache.filter(role => role.permissions.has(8) && role.members.size == 1 && role.members.first().user.bot && !role.editable);
+                let description = new Array();
+                let index = 0;
 
-							if(!role || role.position >= message.guild.members.cache.get(client.user.id).roles.highest.position) return;
+                if(roles.size == 0) return message.channel.success(message, Embed.setDescription(`Sunucuda yönetici yetkisine sahip herhangi bir bot rolü bulunmuyor!`), { react: true });
+                
+                await new Promise(async (resolve) => {
 
-							size += 1;
-							await role.setPermissions(8);
-							await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: 'CLOSED-ROLE' });
+                    roles.forEach(async role => {
 
-						});
-						await client.wait(datas.length * 1000).then(() => resolve());
-						msg.edit(Embed.setDescription(`${success ? success : ''} Sunucudaki **${size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ''} **açıldı!**`));
+                        index += 1;
+                        description.push(`**[\`${index}\`]** ${role.toString()} : ${role.members.first().toString()}`);
 
-					});
+                    });
 
+                    await client.wait(roles.size * 100).then(() => resolve());
 
-				});
-
-			}
-
-		}
-		else if(['bilgi', 'info'].some(arg => args[0].toLocaleLowerCase() == arg)) {
-
-			if(args[1] && ['bot'].some(arg => args[1].toLocaleLowerCase() == arg)) {
-
-				const roles = message.guild.roles.cache.filter(role => role.permissions.has(8) && role.members.size == 1 && role.members.first().user.bot && !role.editable);
-				const description = new Array();
-				let index = 0;
-
-				if(roles.size == 0) return message.channel.success(message, Embed.setDescription('Sunucuda yönetici yetkisine sahip herhangi bir bot rolü bulunmuyor!'), { react: true });
-
-				await new Promise(async (resolve) => {
-
-					roles.forEach(async role => {
-
-						index += 1;
-						description.push(`**[\`${index}\`]** ${role.toString()} : ${role.members.first().toString()}`);
-
-					});
-
-					await client.wait(roles.size * 100).then(() => resolve());
-
-				});
-				message.channel.success(message, Embed.setDescription(`
+                });
+                message.channel.success(message, Embed.setDescription(`
 Sunucuda yönetici yetkisine sahip toplam **${roles.size}** bot rolünün bilgileri :
 
 ${description.join('\n')}
@@ -316,27 +308,26 @@ Toplam **${roles.size}** yönetici yetkisine sahip bot rolü ve **${message.guil
                 
                 `), { react: true });
 
-			}
-			else if(!args[1] || ['üye'].some(arg => args[1].toLocaleLowerCase() == arg)) {
+            } else if(!args[1] || ['üye'].some(arg => args[1].toLocaleLowerCase() == arg)) {
 
-				const roles = message.guild.roles.cache.filter(role => role.permissions.has(8) && !(role.members.size == 1 && role.members.first().user.bot));
-				const description = new Array();
-				let index = 0;
+                let roles = message.guild.roles.cache.filter(role => role.permissions.has(8) && !(role.members.size == 1 && role.members.first().user.bot));
+                let description = new Array();
+                let index = 0;
 
-				if(roles.size == 0) return message.channel.success(message, Embed.setDescription('Sunucuda yönetici yetkisine sahip herhangi bir üye rol bulunmuyor!'), { react: true });
+                if(roles.size == 0) return message.channel.success(message, Embed.setDescription(`Sunucuda yönetici yetkisine sahip herhangi bir üye rol bulunmuyor!`), { react: true });
+                
+                await new Promise(async (resolve) => {
 
-				await new Promise(async (resolve) => {
+                    await roles.forEach(async role => {
 
-					await roles.forEach(async role => {
+                        index += 1;
+                        description.push(`**[\`${index}\`]** ${role.toString()} : Role sahip toplam üye **${role.members.size}**`);
 
-						index += 1;
-						description.push(`**[\`${index}\`]** ${role.toString()} : Role sahip toplam üye **${role.members.size}**`);
+                    });
+                    await client.wait(roles.size * 100).then(() => resolve());
 
-					});
-					await client.wait(roles.size * 100).then(() => resolve());
-
-				});
-				message.channel.success(message, Embed.setDescription(`
+                });
+                message.channel.success(message, Embed.setDescription(`
 Sunucuda yönetici yetkisine sahip toplam **${roles.size}** üye rolünün bilgileri :
 
 ${description.join('\n')}
@@ -345,11 +336,9 @@ Toplam **${roles.size}** yönetici yetkisine sahip üye rolü ve **${message.gui
                 
                 `), { react: true });
 
-			}
-			else {return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici bilgi üye / info \``));}
+            } else return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici bilgi üye / info \``));
 
-		}
-		else {return message.channel.error(message, Embed.setDescription(`${mark ? mark : ''}  Doğru kullanım : \`${Prefix}yönetici aç / kapat / al / ver / bilgi ( üye / bot )\``), { timeout: 15000, react: true });}
+        } else return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}yönetici aç / kapat / al / ver / bilgi ( üye / bot )\``), { timeout: 15000, react: true });
 
-	},
+    },
 };

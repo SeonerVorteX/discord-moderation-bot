@@ -1,10 +1,10 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const afk = Schema({
-	guildID: { type: String, default: '' },
-	userID: { type: String, default: '' },
-	reason: { type: String, default: '' },
-	date: { type: Number, default: Date.now() },
+  guildID: { type: String, default: "" },
+  userID: { type: String, default: "" },
+  reason: { type: String, default: "" },
+  date: { type: Number, default: Date.now() }
 });
 
-module.exports = model('afk', afk);
+module.exports = model("afk", afk);
