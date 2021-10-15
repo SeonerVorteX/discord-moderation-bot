@@ -1,70 +1,73 @@
 module.exports = {
-    name: 'kilit',
-    aliases: ['lock'],
-    category: 'Admin',
-    usage: '<#Kanal/ID>',
-    permission: 'ADMINISTRATOR',
-    guildOnly: true,
-    cooldown: 3,
+	name: 'kilit',
+	aliases: ['lock'],
+	category: 'Admin',
+	usage: '<#Kanal/ID>',
+	permission: 'ADMINISTRATOR',
+	guildOnly: true,
+	cooldown: 3,
 
-    /**
-     * 
-     * @param { Client } client 
-     * @param { Message } message 
-     * @param { Array<String> } args 
+	/**
+     *
+     * @param { Client } client
+     * @param { Message } message
+     * @param { Array<String> } args
      * @param { MessageEmbed } Embed
      */
 
-    execute(client, message, args, Embed) {
+	execute(client, message, args, Embed) {
 
-        let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]);
-        let reason = args.slice(1).join(' ');
+		const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]);
+		const reason = args.slice(1).join(' ');
 
 
-        if(channel) {
+		if(channel) {
 
-            if(channel.type !== 'text') return message.channel.error(message, Embed.setDescription(`Belirttiğin kanal bir metin kanalı değil`), { timeout: 8000, react: true });
-            if(!channel.manageable) return message.channel.error(message, Embed.setDescription(`Bu işlem için yeterli yetkiye sahip değilim`), { timeout: 8000, react: true });
-            if(channel.permissionsFor(message.guild.roles.everyone).has('SEND_MESSAGES')) {
+			if(channel.type !== 'text') return message.channel.error(message, Embed.setDescription('Belirttiğin kanal bir metin kanalı değil'), { timeout: 8000, react: true });
+			if(!channel.manageable) return message.channel.error(message, Embed.setDescription('Bu işlem için yeterli yetkiye sahip değilim'), { timeout: 8000, react: true });
+			if(channel.permissionsFor(message.guild.roles.everyone).has('SEND_MESSAGES')) {
 
-                channel.updateOverwrite(message.guild.roles.everyone, {
-                    SEND_MESSAGES: false,
-                });
+				channel.updateOverwrite(message.guild.roles.everyone, {
+					SEND_MESSAGES: false,
+				});
 
-                message.channel.success(message, Embed.setDescription(`${channel.toString()} kanalı ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} kilitlendi!`), { react: true });
+				message.channel.success(message, Embed.setDescription(`${channel.toString()} kanalı ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} kilitlendi!`), { react: true });
 
-            } else {
+			}
+			else {
 
-                channel.updateOverwrite(message.guild.roles.everyone, {
-                    SEND_MESSAGES: true,
-                });
+				channel.updateOverwrite(message.guild.roles.everyone, {
+					SEND_MESSAGES: true,
+				});
 
-                message.channel.success(message, Embed.setDescription(`${channel.toString()} kanalının kilidi ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} açıldı!`), { react: true });
+				message.channel.success(message, Embed.setDescription(`${channel.toString()} kanalının kilidi ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} açıldı!`), { react: true });
 
-            };
+			}
 
-        } else {
+		}
+		else {
 
-            if(!message.channel.manageable) return message.channel.error(message, Embed.setDescription(`Bu işlem için yeterli yetkiye sahip değilim`), { timeout: 8000, react: true });
-            if(message.channel.permissionsFor(message.guild.roles.everyone).has('SEND_MESSAGES')) {
-               
-                message.channel.success(message, Embed.setDescription(`${message.channel.toString()} kanalı ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} kilitlendi!`), { react: true });
+			if(!message.channel.manageable) return message.channel.error(message, Embed.setDescription('Bu işlem için yeterli yetkiye sahip değilim'), { timeout: 8000, react: true });
+			if(message.channel.permissionsFor(message.guild.roles.everyone).has('SEND_MESSAGES')) {
 
-                message.channel.updateOverwrite(message.guild.roles.everyone, {
-                    SEND_MESSAGES: false,
-                });
+				message.channel.success(message, Embed.setDescription(`${message.channel.toString()} kanalı ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} kilitlendi!`), { react: true });
 
-            } else {
+				message.channel.updateOverwrite(message.guild.roles.everyone, {
+					SEND_MESSAGES: false,
+				});
 
-                message.channel.success(message, Embed.setDescription(`${message.channel.toString()} kanalının kilidi ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} açıldı!`), { react: true });
+			}
+			else {
 
-                message.channel.updateOverwrite(message.guild.roles.everyone, {
-                    SEND_MESSAGES: true,
-                });
+				message.channel.success(message, Embed.setDescription(`${message.channel.toString()} kanalının kilidi ${message.author.toString()} tarafından ${!reason ? '' : `\`${reason}\` sebebiyle`} açıldı!`), { react: true });
 
-            };
+				message.channel.updateOverwrite(message.guild.roles.everyone, {
+					SEND_MESSAGES: true,
+				});
 
-        };
+			}
 
-    },
+		}
+
+	},
 };

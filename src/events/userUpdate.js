@@ -5,50 +5,51 @@ const { forbidRoles, forbidChannel, forbidLog } = client.guildSettings.forbidden
 const forbiddenTag = require('../schemas/forbiddenTag.js');
 
 /**
- * @param { User } oldUser 
- * @param { User } newUser 
+ * @param { User } oldUser
+ * @param { User } newUser
  */
 
 module.exports = async (oldUser, newUser) => {
 
-    if(oldUser.bot || newUser.bot || (oldUser.username === newUser.username)) return;
+	if(oldUser.bot || newUser.bot || (oldUser.username === newUser.username)) return;
 
-    let guild = client.guilds.cache.get(guildID);
-    if(!guild) return;
-    
-    let member = guild.members.cache.get(newUser.id);
-    if(!member) return;
+	const guild = client.guilds.cache.get(guildID);
+	if(!guild) return;
 
-    let data = await forbiddenTag.findOne({ guildID: guild.id });
+	const member = guild.members.cache.get(newUser.id);
+	if(!member) return;
 
-    if(data && data.forbiddenTags.length && data.forbiddenTags.some(tag => !oldUser.username.includes(tag) && newUser.username.includes(tag))) {
+	const data = await forbiddenTag.findOne({ guildID: guild.id });
 
-        setTimeout(() => {
+	if(data && data.forbiddenTags.length && data.forbiddenTags.some(tag => !oldUser.username.includes(tag) && newUser.username.includes(tag))) {
 
-            if(member.manageable) member.roles.set(forbidRoles);
-            let tag = data.forbiddenTags.find(tag => newUser.username.includes(tag));
-            if(dmMessages) newUser.send(`Yeni kullanıcı adınızda bulunan \`${tag}\` tagı **${guild.name}** sunucusunun yasaklı taglarından biri olduğu için sunucuya erişiminiz kesildi!`).catch(() => {});
-            guild.channels.cache.get(forbidChannel).send(`${newUser.toString()}, Maalesef yeni kullanıcı adın sunucumuzdaki yasaklı taglardan birini ( \`${tag}\` ) içeriyor. Bu sebeple sunucuya erişemezsin!`);
-            guild.channels.cache.get(forbidLog).send(`\`${member.user.tag} (${member.user.id})\` kullanıcısının sunucuya erişimi kesildi! \`(Tag: ${tag})\``);
+		setTimeout(() => {
 
-        }, 2000);
+			if(member.manageable) member.roles.set(forbidRoles);
+			const tag = data.forbiddenTags.find(tag => newUser.username.includes(tag));
+			if(dmMessages) newUser.send(`Yeni kullanıcı adınızda bulunan \`${tag}\` tagı **${guild.name}** sunucusunun yasaklı taglarından biri olduğu için sunucuya erişiminiz kesildi!`).catch(() => {});
+			guild.channels.cache.get(forbidChannel).send(`${newUser.toString()}, Maalesef yeni kullanıcı adın sunucumuzdaki yasaklı taglardan birini ( \`${tag}\` ) içeriyor. Bu sebeple sunucuya erişemezsin!`);
+			guild.channels.cache.get(forbidLog).send(`\`${member.user.tag} (${member.user.id})\` kullanıcısının sunucuya erişimi kesildi! \`(Tag: ${tag})\``);
 
-    } else if(data && data.forbiddenTags.length && data.forbiddenTags.some(tag => oldUser.username.includes(tag) && !newUser.username.includes(tag))) {
+		}, 2000);
 
-        setTimeout(() => {
+	}
+	else if(data && data.forbiddenTags.length && data.forbiddenTags.some(tag => oldUser.username.includes(tag) && !newUser.username.includes(tag))) {
 
-            if(member.manageable) member.roles.set(unregisterRoles);
-            let tag = data.forbiddenTags.find(tag => oldUser.username.includes(tag) && !newUser.username.includes(tag));
-            if(dmMessages) newUser.send(`Kullanıcı adınızda bulunan ve **${guild.name}** sunucusunun yasaklı taglarından biri olan \`${tag}\` tagını kullanıcı adınızdan saldığınız için sunucuya erişiminiz tekrar açıldı!`).catch(() => {});
-            guild.channels.cache.get(forbidLog).send(`\`${member.user.tag} (${member.user.id})\` kullanıcısının sunucuya erişimi açıldı! \`(Tag: ${tag})\``);
+		setTimeout(() => {
 
-        }, 2000);
+			if(member.manageable) member.roles.set(unregisterRoles);
+			const tag = data.forbiddenTags.find(tag => oldUser.username.includes(tag) && !newUser.username.includes(tag));
+			if(dmMessages) newUser.send(`Kullanıcı adınızda bulunan ve **${guild.name}** sunucusunun yasaklı taglarından biri olan \`${tag}\` tagını kullanıcı adınızdan saldığınız için sunucuya erişiminiz tekrar açıldı!`).catch(() => {});
+			guild.channels.cache.get(forbidLog).send(`\`${member.user.tag} (${member.user.id})\` kullanıcısının sunucuya erişimi açıldı! \`(Tag: ${tag})\``);
 
-    };
+		}, 2000);
+
+	}
 
 };
 
 module.exports.conf = {
-    name: 'User Update',
-    event: 'userUpdate'
+	name: 'User Update',
+	event: 'userUpdate',
 };
