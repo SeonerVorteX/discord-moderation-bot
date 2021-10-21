@@ -9,14 +9,14 @@ module.exports = (client) => {
     client.settings = {
 
         "Prefix": ".",
-        "Token": "ODc1NjgyMjQ2Mzk5NTE2Njk0.YRZEpA.YRYQoJtNoypkGZZtwu31ago9DU4",
-        "Owners": ["809325505304068096", "624914071984013313"],
-        "OtherBots": ["855074136065048597", "873189554700574741", "819623504630251570", "880140912238420008"],
-        "VoiceChannel": "836467888436019242",
+        "Token": "",
+        "Owners": [],
+        "OtherBots": [],
+        "VoiceChannel": "",
         "Activity": "LISTENING",
         "Status": "idle",
-        "MongoURL": "mongodb+srv://seonervortex:aze1234321@cluster0.argb1.mongodb.net/vortexTest?retryWrites=true&w=majority",
-        "Footer": "VorteX",
+        "MongoURL": "",
+        "Footer": "SeonerVorteX",
         "DisableCooldownsForAdmins": true,
 
     };
@@ -72,9 +72,9 @@ module.exports = (client) => {
     client.guildSettings = {
 
         ///General
-        "guildID": "836467117393969163",
+        "guildID": "",
         "guildTags": [],
-        "guildDiscriminator": "1927",
+        "guildDiscriminator": "",
         "guildTeams": [],
         "guildChat": "",
         "dmMessages": true,
@@ -84,7 +84,7 @@ module.exports = (client) => {
         "staffGivers": [],
         "transporterSpears": [],
         "registerSpears": [],
-        "botYt": "836467869633085480",
+        "botYt": "",
 
         ///Penals
         "penals": {
@@ -101,30 +101,30 @@ module.exports = (client) => {
 
             ///Jail
             "jail": {
-                "staffs": ['836467871127306290'],
-                "jailRoles": ['836467875647848459'],
-                "jailChannel": "836467895156211772",
+                "staffs": [],
+                "jailRoles": [],
+                "jailChannel": "",
                 "penalPoint": 30,
                 "penalLimit": 0,
-                "log": "836467895156211772",
+                "log": "",
             },
 
             ///Chat Mute
             "chatMute": {
                 "staffs": [],
-                "cmuteRoles": ['836467875647848459'],
+                "cmuteRoles": [],
                 "penalPoint": 20,
                 "penalLimit": 1,
-                "log": "836467895156211772",
+                "log": "",
             },
 
             ///Voice Mute
             "voiceMute": {
                 "staffs": [],
-                "vmuteRoles": ['836467875647848459'],
+                "vmuteRoles": [],
                 "penalPoint": 20,
                 "penalLimit": 0,
-                "log": "836467895156211772",
+                "log": "",
             },
 
             ///Warn
@@ -132,16 +132,16 @@ module.exports = (client) => {
                 "staffs": [],
                 "warnRoles": [{
                     "warnCount": 1,
-                    "warnRole": "836467874267922443", 
+                    "warnRole": "", 
                 }, {
                     "warnCount": 2,
-                    "warnRole": "836467873618722866",
+                    "warnRole": "",
                 }, {
                     "warnCount": 3,
-                    "warnRole": "836467872665829378",
+                    "warnRole": "",
                 }],
                 "penalPoint": 10,
-                "log": "836467895156211772",
+                "log": "",
             },
 
         },
@@ -149,7 +149,7 @@ module.exports = (client) => {
         ///Registration
         "registration": {
             "unregisterName": "",
-            "unregisterRoles": ["836467876432445470"],
+            "unregisterRoles": [],
             "unregisterChannel": "",
             "quarantineRole": "",
             "familyRole": "",
@@ -157,18 +157,18 @@ module.exports = (client) => {
 
         ///Forbidden Tag
         "forbiddenTag": {
-            "forbidRoles": ['836467875647848459'],
-            "forbidChannel": "836467895156211772",
-            "forbidLog": "836467895156211772",
+            "forbidRoles": [],
+            "forbidChannel": "",
+            "forbidLog": "",
         },
 
         ///Logs
         "logs": {
-            "pointLog": "836467895156211772",
-            "voiceLog": "836467895156211772",
-            "messageLog": "836467895156211772",
-            "buttonLog": "836467895156211772",
-            "securityLog": "836467895156211772",
+            "pointLog": "",
+            "voiceLog": "",
+            "messageLog": "",
+            "buttonLog": "",
+            "securityLog": "",
         },
 
     };
