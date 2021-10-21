@@ -94,7 +94,7 @@ module.exports = (client) => {
                 "staffs": [],
                 "penalPoint": 40,
                 "penalLimit": 0,
-                "log": "836467895156211772",
+                "log": "",
                 "banGifs": ['https://media1.tenor.com/images/ed33599ac8db8867ee23bae29b20b0ec/tenor.gif?itemid=14760307', 'https://media.giphy.com/media/fe4dDMD2cAU5RfEaCU/giphy.gif', 'https://media1.tenor.com/images/4732faf454006e370fa9ec6e53dbf040/tenor.gif?itemid=14678194'],
                 "unbanGifs": ['https://data.whicdn.com/images/192611812/original.gif'],
             },
