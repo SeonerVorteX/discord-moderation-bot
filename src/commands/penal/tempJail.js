@@ -1,6 +1,6 @@
 const { Owners, Prefix } = global.client.settings;
 const { unregisterRoles } = global.client.guildSettings.registration;
-const { unAuthorizedMessages, botYt, dmMessages, penals, logs } = global.client.guildSettings;
+const { botYt, dmMessages, penals, logs } = global.client.guildSettings;
 const { staffs, jailRoles, penalPoint, penalLimit, log } = penals.jail;
 const { jailed } = require('../../configs/emojis.json');
 const Penals = require('../../schemas/penals.js');
@@ -26,10 +26,7 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
-            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
-            else return;
-        };
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         let duration = args[1];
@@ -46,8 +43,8 @@ module.exports = {
         if(!['s', 'sn', 'saniye', 'm', 'minute', 'dk', 'dakika', 'h', 'hour', 'st', 'saat', 'd', 'day', 'g', 'gün'].some(arg => duration.includes(arg))) return message.channel.error(message, `Sadece \`saniye(s, sn)\` , \`dakika(dk, m, minute)\` , \`saat(st, h, hour)\` , \`gün(g, d, day)\` cinsinden bir süre belirtmelisin! Örnek : \`${Prefix}tempjail @Üye/ID 15dk ırkçılık\``, { timeout: 15000, reply: true, react: true });
         if(isNaN(client.replaceDuration(duration)) || client.replaceDuration(duration) == 0 || client.replaceDuration(duration).includes('-')) return message.channel.error(message, `Geçerli bir süre miktarı belirtmelisin`, { timeout: 8000, reply: true, react: true });
         
-        let staffDatas = await Penals.find({ guildID: message.guild.id, type: 'JAIL', staffID: message.author.id });
-        let staffDatas2 = await Penals.find({ guildID: message.guild.id, type: 'TEMP-JAIL', staffID: message.author.id });
+        let staffDatas = await Penals.find({ guildID: message.guild.id, type: 'JAIL', staff: message.author.id });
+        let staffDatas2 = await Penals.find({ guildID: message.guild.id, type: 'TEMP-JAIL', staff: message.author.id });
         let dataSize = staffDatas.filter(staffData => staffData.date && (Date.now() - staffData.date) < 3600 * 1000);
         let dataSize2 = staffDatas2.filter(staffData => staffData.date && (Date.now() - staffData.date) < 3600 * 1000);
         
@@ -59,7 +56,7 @@ module.exports = {
         let point = await client.addPenalPoint(message.guild.id, user.id, penalPoint);
         let penal = await client.newPenal(message.guild.id, user.id, "TEMP-JAIL", true, message.author.id, !reason ? 'Belirtilmedi!' : reason, undefined, Date.now(), Date.now() + ms(duration.duration));
 
-        message.channel.success(message, Embed.setDescription(`${jailed ? jailed : ``} \`${user.user.tag}\` isimli kullanıcı, ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle,`} **${duration.durationMsg}** boyunca jaillendi! \`(Ceza ID : #${penal.id})\``), { react: true });
+        message.channel.true(message, Embed.setDescription(`${jailed} \`${user.user.tag}\` isimli kullanıcı, ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`}, **${duration.durationMsg}** boyunca jaillendi! \`(Ceza ID : #${penal.id})\``), { react: true });
         if(log) client.channels.cache.get(log).send(Embed.setColor('#FF0000').setDescription(`
 ${user.toString()} kullanıcısı \`${duration.durationMsg}\` boyunca **jaillendi!**
 
@@ -71,8 +68,8 @@ ${user.toString()} kullanıcısı \`${duration.durationMsg}\` boyunca **jaillend
 **Jaillenme Sebebi :** \`${!reason ? 'Belirtilmedi!' : reason}\`
         `));
 
-        if(dmMessages) user.send(`${jailed ? jailed : ``} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle,`} **${duration.durationMsg}** boyunca jaillendiniz! \`(Ceza ID : #${penal.id})\``).catch(() => {});
-        if(logs.pointLog) client.channels.cache.get(logs.pointLog).send(`${jailed ? jailed : ``} ${user.toString()}, aldığınız \`#${penal.id}\` ID'li **TempJail** cezası ile toplam **${point.penalPoint}** ceza puanına ulaştınız!`);
+        if(dmMessages) user.send(`${jailed} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`}, **${duration.durationMsg}** boyunca jaillendiniz! \`(Ceza ID : #${penal.id})\``).catch(() => {});
+        if(logs.pointLog) client.channels.cache.get(logs.pointLog).send(`${jailed} ${user.toString()}, aldığınız \`#${penal.id}\` ID'li **TempJail** cezası ile toplam **${point.penalPoint}** ceza puanına ulaştınız!`);
 
         setTimeout(async () => {
 
@@ -96,7 +93,7 @@ ${user.toString()} kullanıcısının **temp-jail** cezasının süresi bitti!
 **Jaillenme Sebebi :** \`${!penal.reason ? 'Belirtilmedi!' : penal.reason}\`
             `));
 
-            if(dmMessages) user.send(`${jailed ? jailed : ``} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} aldığınız **temp-jail** cezasının süresi bitti! \`(Ceza ID : #${penal.id})\``).catch(() => {});
+            if(dmMessages) user.send(`${jailed} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} aldığınız **temp-jail** cezasının süresi bitti! \`(Ceza ID : #${penal.id})\``).catch(() => {});
 
         }, ms(duration.duration));
 

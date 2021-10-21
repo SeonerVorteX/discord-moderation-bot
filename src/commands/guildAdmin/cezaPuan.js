@@ -7,7 +7,7 @@ module.exports = {
     name: 'cezapuan',
     aliases: ['puan'],
     category: 'Admin',
-    usage: '[<@Üye/ID> / (ekle / sil)]',
+    usage: '<@Üye/ID> / ( ekle / sil )',
     permission: 'ADMINISTRATOR',
     guildOnly: true, 
     cooldown: 3,
@@ -16,14 +16,17 @@ module.exports = {
      * @param { Client } client 
      * @param { Message } message 
      * @param { Array<String> } args 
+     * @param { MessageEmbed } Embed 
      */
 
-    async execute(client, message, args) {
+    async execute(client, message, args, Embed) {
+
+        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
         if(!args[0]) {
 
             let data = await penalPoints.findOne({ guildID: message.guild.id, userID: message.author.id });
-            message.channel.success(message, `Ceza Puanın : **${data && data.penalPoint ? data.penalPoint : 0}**`, { react: true });
+            message.channel.true(message, `Ceza Puanın : **${data && data.penalPoint ? data.penalPoint : 0}**`, { react: true });
 
         } else if(['ekle', 'add'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
@@ -39,7 +42,7 @@ module.exports = {
 
             let data = await penalPoints.findOneAndUpdate({ guildID: message.guild.id, userID: user.id }, { $inc: { penalPoint: point } }, { upsert: true });
 
-            message.channel.success(message, `\`${user.displayName}\` üyesinin ceza puanı${reason ? ` \`${reason}\` sebebiyle` : ``} **${point}** puan artırıldı!`, { react: true });
+            message.channel.true(message, `\`${user.displayName}\` üyesinin ceza puanı${reason ? ` \`${reason}\` sebebiyle` : ``} **${point}** puan artırıldı!`, { react: true });
 
         } else if(['sil', 'çıkar', 'remove'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
@@ -59,16 +62,16 @@ module.exports = {
 
             data = await penalPoints.findOneAndUpdate({ guildID: message.guild.id, userID: user.id }, { $inc: { penalPoint: -point } }, { upsert: true });
 
-            message.channel.success(message, `\`${user.displayName}\` üyesinin ceza puanı${reason ? ` \`${reason}\` sebebiyle` : ``} **${point}** puan eksildi!`, { react: true });
+            message.channel.true(message, `\`${user.displayName}\` üyesinin ceza puanı${reason ? ` \`${reason}\` sebebiyle` : ``} **${point}** puan eksildi!`, { react: true });
 
         } else if(args[0]) {
 
             let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
-            if(!user) return message.channel.error(message, `${mark ? mark : ``}  Doğru kullanım : \`${Prefix}cezapuan <@Üye/ID> / (ekle / sil)\``, { timeout: 8000, reply: true, react: true });
+            if(!user) return message.channel.error(message, `${mark} Doğru kullanım : \`${Prefix}cezapuan <@Üye/ID> / ( ekle / sil )\``, { timeout: 8000, reply: true, react: true });
 
             let data = await penalPoints.findOne({ guildID: message.guild.id, userID: user.id });
-            message.channel.success(message, `\`${user.displayName}\` Üyesinin Ceza Puanı : **${data && data.penalPoint ? data.penalPoint : 0}**`, { react: true });
+            message.channel.true(message, `\`${user.displayName}\` Üyesinin Ceza Puanı : **${data && data.penalPoint ? data.penalPoint : 0}**`, { react: true });
 
         };
 

@@ -1,5 +1,5 @@
 const { Owners } = global.client.settings;
-const { unAuthorizedMessages, botYt, dmMessages, penals } = global.client.guildSettings;
+const { botYt, dmMessages, penals } = global.client.guildSettings;
 const { staffs, cmuteRoles, log } = penals.chatMute;
 const { unCMuted } = require('../../configs/emojis.json');
 const Penals = require('../../schemas/penals.js');
@@ -24,10 +24,7 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
-            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
-            else return;
-        };
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         let reason = args.slice(1).join(' ');
@@ -50,7 +47,7 @@ module.exports = {
 
         };
 
-        message.channel.success(message, Embed.setDescription(`${unCMuted ? unCMuted : `:speech_balloon:`} \`${user.user.tag}\` isimli kullanıcının **metin kanallarındaki** susturulma cezası ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} kaldırıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
+        message.channel.true(message, Embed.setDescription(`${unCMuted} \`${user.user.tag}\` isimli kullanıcının **metin kanallarındaki** susturulma cezası ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} kaldırıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
         if(log) client.channels.cache.get(log).send(Embed.setColor('#0000FF').setDescription(`
 ${user.toString()} kullanıcısının  **metin kanallarındaki** susturulma cezası kaldırıldı!
 
@@ -62,7 +59,7 @@ ${user.toString()} kullanıcısının  **metin kanallarındaki** susturulma ceza
 **Cezanın Kaldırılma Sebebi :** \`${!reason ? 'Belirtilmedi!' : reason}\`
         `));
 
-        if(dmMessages) user.send(`${unCMuted ? unCMuted : `:speech_balloon:`} \`${message.guild.name}\` adlı sunucuda **${message.author.tag}** tarafından **metin kanallarında** olan susturulma cezanız kaldılırdı! \`(Ceza ID : #${penal.id})\``).catch(() => {});
+        if(dmMessages) user.send(`${unCMuted} \`${message.guild.name}\` adlı sunucuda **${message.author.tag}** tarafından **metin kanallarında** olan susturulma cezanız kaldılırdı! \`(Ceza ID : #${penal.id})\``).catch(() => {});
 
     },
 };

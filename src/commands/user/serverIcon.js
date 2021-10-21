@@ -15,7 +15,7 @@ module.exports = {
 
     execute(client, message, args, Embed) {
 
-        message.channel.success(message, Embed.setFooter(``).setImage(message.guild.iconURL({ dynamic: true, size: 256 })), { react: true });
+        message.channel.true(message, Embed.setFooter(``).setImage(message.guild.iconURL({ dynamic: true, size: 256 })), { react: true });
 
     },
 };

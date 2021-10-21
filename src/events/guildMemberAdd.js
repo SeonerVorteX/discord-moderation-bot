@@ -25,14 +25,14 @@ module.exports = async (member) => {
 
     if(data && data.forbiddenTags.length && data.forbiddenTags.some(tag => member.user.username.includes(tag))) {
 
-        await client.wait(2000).then(() => {
+        setTimeout(() => {
 
             if(member.manageable) member.roles.set(forbidRoles);
             let tag = data.forbiddenTags.find(tag => member.user.username.includes(tag));
             member.guild.channels.cache.get(forbidChannel).send(`${member.toString()} sunucumuza hoş geldin. Maalesef kullanıcı adın sunucumuzdaki yasaklı taglardan birini ( \`${tag}\` ) içeriyor. Bu sebeple sunucuya erişemezsin!`);
             member.guild.channels.cache.get(forbidLog).send(`\`${member.user.tag} (${member.user.id})\` kullanıcısının sunucuya erişimi kesildi! \`(Tag: ${tag})\``);
 
-        });
+        }, 2000);
 
     };
 
@@ -44,7 +44,9 @@ module.exports = async (member) => {
 
     if(penal1 || penal2) {
 
-        await client.wait(3000).then(() => member.roles.set(jailRoles));
+        setTimeout(() => {
+            member.roles.set(jailRoles);
+        }, 3000);
 
         let channel = member.guild.channels.cache.get(securityLog);
 
@@ -54,7 +56,9 @@ module.exports = async (member) => {
 
         if(penal3) {
 
-            await client.wait(3000).then(() => member.roles.add(cmuteRoles));
+            setTimeout(() => {
+                member.roles.add(cmuteRoles);
+            }, 3000);
 
             if(channel && channel.type == 'text') channel.send(Embed.setTitle(`Chat-Mute Taraması :`).setDescription(`Sunucuya yeni katılan ${member.toString()} kullanıcısında \`#${penal3.id}\` ID'li aktif **CHAT-MUTE** cezası tespit edildi. Sunucu güvenliği için kullanıcı **metin kanallarında** tekrar susturuldu!`));
         
@@ -64,7 +68,9 @@ module.exports = async (member) => {
 
         if(penal4) {
 
-            await client.wait(3000).then(() => member.roles.add(vmuteRoles));
+            setTimeout(() => {
+                member.roles.add(vmuteRoles);
+            }, 3000);
 
             if(channel && channel.type == 'text') channel.send(Embed.setTitle(`Voice-Mute Taraması :`).setDescription(`Sunucuya yeni katılan ${member.toString()} kullanıcısında \`#${penal4.id}\` ID'li aktif **VOICE-MUTE** cezası tespit edildi. Sunucu güvenliği için kullanıcı **ses kanallarında** tekrar susturuldu!`));
         
@@ -78,7 +84,9 @@ module.exports = async (member) => {
 
         if(penal3) {
 
-            await client.wait(3000).then(() => member.roles.add(cmuteRoles));
+            setTimeout(() => {
+                member.roles.add(cmuteRoles);
+            }, 3000);
 
             if(channel && channel.type == 'text') channel.send(Embed.setTitle(`Chat-Mute Taraması :`).setDescription(`Sunucuya yeni katılan ${member.toString()} kullanıcısında \`#${penal3.id}\` ID'li aktif **CHAT-MUTE** cezası tespit edildi. Sunucu güvenliği için kullanıcı **metin kanallarında** tekrar susturuldu!`));
         
@@ -88,7 +96,9 @@ module.exports = async (member) => {
 
         if(penal4) {
 
-            await client.wait(3000).then(() => member.roles.add(vmuteRoles));
+            setTimeout(() => {
+                member.roles.add(vmuteRoles);
+            }, 3000);
 
             if(channel && channel.type == 'text') channel.send(Embed.setTitle(`Voice-Mute Taraması :`).setDescription(`Sunucuya yeni katılan ${member.toString()} kullanıcısında \`#${penal4.id}\` ID'li aktif **VOICE-MUTE** cezası tespit edildi. Sunucu güvenliği için kullanıcı **ses kanallarında** tekrar susturuldu!`));
         

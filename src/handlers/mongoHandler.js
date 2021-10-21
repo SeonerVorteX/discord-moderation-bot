@@ -7,5 +7,10 @@ mongoose.connect(MongoURL, {
   useFindAndModify: false,
 });
 
-mongoose.connection.on("connected", () => console.log("[DATABASE] Connected To Database"));
-mongoose.connection.on("error", () => console.error("[DATABASE] Failed To Connect Database"));
+mongoose.connection.on("connected", () => {
+  console.log("[DATABASE] Connected To Database");
+});
+
+mongoose.connection.on("error", () => {
+  console.error("[DATABASE] Failed To Connect Database");
+});

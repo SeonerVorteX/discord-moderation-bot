@@ -8,7 +8,7 @@ module.exports = {
     name: 'ses',
     aliases: ['n', 'voice'],
     category: 'Admin',
-    usage: '[<@Üye/ID> / <#Kanal/ID>]',
+    usage: '(@Üye/ID) / (#Kanal/ID)',
     permission: 'ADMINISTRATOR',
     guildOnly: true,
     cooldown: 3,
@@ -29,13 +29,13 @@ module.exports = {
 
             let voiceData = await voiceJoinedAt.findOne({ guildID: message.guild.id, userID: message.author.id });
 
-            if(!message.member.voice.channel) return message.channel.error(message, Embed.setDescription(`Herhangi bir ses kanalında bulunmuyorsun!`), { timeout: 8000, react: true });
+            if(!message.member.voice.channel) return message.channel.error(message, `Herhangi bir ses kanalında bulunmuyorsun!`, { timeout: 8000, reply: true, react: true });
 
-            message.channel.success(message, Embed.setDescription(`
+            message.channel.true(message, Embed.setDescription(`
 ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 
-**Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted}` : `Açık ${unMuted}`}
+**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen}` : `Açık ${unDeafen}`}
 **Veri Bilgilerin :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` sestesin!`}
             `), { react: true });
 
@@ -46,13 +46,13 @@ ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
                 
                 let voiceData = await voiceJoinedAt.findOne({ guildID: message.guild.id, userID: message.author.id });
 
-                if(!message.member.voice.channel) return message.channel.error(message, Embed.setDescription(`Herhangi bir ses kanalında bulunmuyorsun!`), { timeout: 8000, react: true });
+                if(!message.member.voice.channel) return message.channel.error(message, `Herhangi bir ses kanalında bulunmuyorsun!`, { timeout: 8000, reply: true, react: true });
 
-                message.channel.success(message, Embed.setDescription(`
+                message.channel.true(message, Embed.setDescription(`
 ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 
-**Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted}` : `Açık ${unMuted}`}
+**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen}` : `Açık ${unDeafen}`}
 **Veri Bilgilerin :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` sestesin!`}
                 `), { react: true });
 
@@ -61,13 +61,13 @@ ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 
                 let voiceData = await voiceJoinedAt.findOne({ guildID: message.guild.id, userID: user.id });
 
-                if(!user.voice.channel) return message.channel.error(message, Embed.setDescription(`Belirttiğin üye herhangi bir ses kanalında bulunmuyor!`), { timeout: 8000, react: true });
+                if(!user.voice.channel) return message.channel.error(message, `Belirttiğin üye herhangi bir ses kanalında bulunmuyor!`, { timeout: 8000, reply: true, react: true });
 
-                message.channel.success(message, Embed.setDescription(`
+                message.channel.true(message, Embed.setDescription(`
 ${user.toString()} isimli kullanıcının sesteki bilgileri :
 
-**Kullanıcının Mikrofonu :** ${user.voice.selfMute || user.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kullanıcının Kulaklığı :** ${user.voice.selfDeaf || user.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Kullanıcının Mikrofonu :** ${user.voice.selfMute || user.voice.serverMute ? `Kapalı ${muted}` : `Açık ${unMuted}`}
+**Kullanıcının Kulaklığı :** ${user.voice.selfDeaf || user.voice.serverDeaf ? `Kapalı ${deafen}` : `Açık ${unDeafen}`}
 **Veri Bilgileri :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` seste!`}
                 `), { react: true });
 
@@ -75,8 +75,8 @@ ${user.toString()} isimli kullanıcının sesteki bilgileri :
 
         } else if(channel) {
 
-            if(channel.type !== 'voice') return message.channel.error(message, Embed.setDescription(`Belirttiğin kanal bir ses kanalı değil!`), { timeout: 8000, react: true });
-            if(channel.members.size == 0) return message.channel.error(message, Embed.setDescription(`Belirttiğin ses kanalında her hangi bir üye bulunmuyor`), { timeout: 8000, react: true });
+            if(channel.type !== 'voice') return message.channel.error(message, `Belirttiğin kanal bir ses kanalı değil!`, { timeout: 8000, reply: true, react: true });
+            if(channel.members.size == 0) return message.channel.error(message, `Belirttiğin ses kanalında her hangi bir üye bulunmuyor`, { timeout: 8000, reply: true, react: true });
             
             let voiceDatas = await voiceJoinedAt.find({ guildID: message.guild.id }).sort({ date: -1 });
             
@@ -143,7 +143,7 @@ ${pages[0].map((member) => `${member.toString()} : \`${voiceDatas && voiceDatas.
 
             } else {
 
-                message.channel.success(message, Embed.setDescription(`
+                message.channel.true(message, Embed.setDescription(`
 ${channel.toString()} adlı kanaldaki üyelerin bilgileri :
 
 ${channel.members.map((member) => `${member.toString()} : \`${voiceDatas && voiceDatas.find(data => data.userID == member.user.id) ? moment.duration(Date.now() - voiceDatas.find(data => data.userID == member.user.id).date).format(`D [gün] H [saat] m [dakika] s [saniye]`) : `Veri Bulunamadı`}\` - ( ${member.voice.selfMute || member.voice.serverMute ? muted : unMuted} / ${member.voice.selfDeaf || member.voice.serverDeaf ? deafen : unDeafen} )`).join('\n')}
@@ -151,7 +151,7 @@ ${channel.members.map((member) => `${member.toString()} : \`${voiceDatas && voic
 
             };
 
-        } else return message.channel.error(message, Embed.setDescription(`Geçerli bir üye veya ses kanalı belirtmelisin!`), { timeout: 8000, react: true });
+        } else return message.channel.error(message, `Geçerli bir üye veya ses kanalı belirtmelisin!`, { timeout: 8000, reply: true, react: true });
 
     },
 };

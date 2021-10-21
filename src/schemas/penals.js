@@ -6,7 +6,7 @@ const penals = Schema({
   guildID: { type: String, default: "" },
   type: { type: String, default: "" },
   active: { type: Boolean, default: true },
-  staffID: { type: String, default: "" },
+  staff: { type: String, default: "" },
   reason: { type: String, default: "" },
   temp: { type: Boolean, default: false },
   date: { type: Number, default: Date.now()},

@@ -1,5 +1,5 @@
 const { Owners, Prefix } = global.client.settings;
-const { unAuthorizedMessages, botYt, dmMessages, penals, logs } = global.client.guildSettings;
+const { botYt, dmMessages, penals, logs } = global.client.guildSettings;
 const { staffs, warnRoles, penalPoint, log } = penals.warn;
 const { warned } = require('../../configs/emojis.json');
 const Penals = require('../../schemas/penals.js');
@@ -24,10 +24,7 @@ module.exports = {
     
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission('ADMINISTRATOR') && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
-            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
-            else return;
-        };
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission('ADMINISTRATOR') && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         let reason = args.slice(1).join(' ');
@@ -45,7 +42,7 @@ module.exports = {
 
         if(datas.length > 0 && warnRoles.some(role => role.warnCount == datas.length)) user.roles.add(warnRoles.find(role => role.warnCount == datas.length).warnRole);
 
-        message.channel.success(message, Embed.setDescription(`${warned} \`${user.user.tag}\` isimli kullanıcı, ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} uyarıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
+        message.channel.true(message, Embed.setDescription(`${warned} \`${user.user.tag}\` isimli kullanıcı, ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} uyarıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
         if(log) client.channels.cache.get(log).send(Embed.setDescription(`
 ${user.toString()} kullanıcısı **uyarıldı!**
 

@@ -1,7 +1,7 @@
 const { Owners, OtherBots } = global.client.settings;
-const { unAuthorizedMessages, transporterSpears, botYt, logs } = global.client.guildSettings;
+const { transporterSpears, botYt, logs } = global.client.guildSettings;
 const { voiceLog } = logs;
-const { mark, loading, success, changeState } = require('../../configs/emojis.json');
+const { changeState } = require('../../configs/emojis.json');
 
 module.exports = {
     name: 'taşı',
@@ -20,10 +20,7 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!message.member.hasPermission('MOVE_MEMBERS') && !Owners.includes(message.author.id) && !message.member.roles.cache.has(botYt) && !transporterSpears.some(spear => message.member.roles.cache.has(spear))) {
-            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
-            else return;
-        };
+        if(!message.member.hasPermission('MOVE_MEMBERS') && !Owners.includes(message.author.id) && !message.member.roles.cache.has(botYt) && !transporterSpears.some(spear => message.member.roles.cache.has(spear))) return;
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]);
@@ -45,11 +42,11 @@ module.exports = {
 
                 let vLog = message.guild.channels.cache.get(voiceLog);
                 
-                if(vLog && vLog.type == 'text') vLog.send(`${changeState ? changeState : `:arrow_up_down:`} \`${user.displayName}\` üyesi \`${message.member.displayName}\` tarafından ${user.voice.channel.toString()} adlı ses kanalından ${channel2.toString()} adlı ses kanalına **taşındı!**`);
+                if(vLog && vLog.type == 'text') vLog.send(`${changeState} \`${user.displayName}\` üyesi \`${message.member.displayName}\` tarafından ${user.voice.channel.toString()} adlı ses kanalından ${channel2.toString()} adlı ses kanalına **taşındı!**`);
 
             };
 
-            message.channel.success(message, Embed.setDescription(`${user.toString()} isimli kullanıcı ${user.voice.channel.toString()} adlı ses kanalından ${!reason ? '' : `\`${reason}\` nedeniyle`} ${channel2.toString()} adlı ses kanalına **taşındı!**`), { react: true });
+            message.channel.true(message, Embed.setDescription(`${user.toString()} isimli kullanıcı ${user.voice.channel.toString()} adlı ses kanalından ${!reason ? '' : `\`${reason}\` nedeniyle`} ${channel2.toString()} adlı ses kanalına taşındı!`), { react: true });
             await user.voice.setChannel(channel2.id);
 
         };
@@ -65,36 +62,22 @@ module.exports = {
             if(channel.id == channel2.id) return message.channel.error(message, `Belittiğin kanaldaki üyeler zaten belirtilen ses kanalında!`, { timeout: 5000, reply: true, react: true });
 
             let totalMembers = channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).size;
-            let index = 0;
-            if(mark) message.react(mark);
-            message.channel.send(Embed.setDescription(`${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} ${channel2.toString()} adlı ses kanalına **taşınıyor** ${loading ? loading : ``} `)).then(async msg => {
 
-                await new Promise(async (resolve) => {
+            message.channel.true(message, Embed.setDescription(`${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} ${channel2.toString()} adlı ses kanalına taşındı!`), { react: true });
+            channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).forEach(async (member, index) => {
 
-                    channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).forEach(async member => {
+                if(voiceLog) {
 
-                        if(voiceLog) {
-
-                            let vLog = message.guild.channels.cache.get(voiceLog);
-                            
-                            if(vLog && vLog.type == 'text') vLog.send(`${changeState ? changeState : `:arrow_up_down:`} \`${member.displayName}\` üyesi \`${message.member.displayName}\` tarafından ${member.voice.channel.toString()} adlı ses kanalından ${channel2.toString()} adlı ses kanalına **taşındı!**`);
-            
-                        };
-                        
-                        index += 1;
-                        await client.wait(index * 500);
-                        await member.voice.setChannel(channel2.id);
-
-                    });
-
-                    await client.wait(channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).size * 500).then(() => resolve())
-
-                });
-
-                msg.edit(Embed.setDescription(`${success ? success : ``} ${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} ${channel2.toString()} adlı ses kanalına **taşındı!**`), { react: true });
+                    let vLog = message.guild.channels.cache.get(voiceLog);
+                    
+                    if(vLog && vLog.type == 'text') vLog.send(`${changeState} \`${user.displayName}\` üyesi \`${message.member.displayName}\` tarafından ${user.voice.channel.toString()} adlı ses kanalından ${channel2.toString()} adlı ses kanalına **taşındı!**`);
+    
+                };
+                
+                client.wait(index * 1200);
+                await member.voice.setChannel(channel2.id);
 
             });
-
         };
 
     },

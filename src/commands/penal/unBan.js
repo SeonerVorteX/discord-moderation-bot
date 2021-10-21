@@ -1,5 +1,5 @@
 const { Owners } = global.client.settings;
-const { unAuthorizedMessages, botYt, dmMessages, penals } = global.client.guildSettings;
+const { botYt, dmMessages, penals } = global.client.guildSettings;
 const { staffs, log, unbanGifs } = penals.ban;
 const Penals = require('../../schemas/penals.js');
 const forceBans = require('../../schemas/forceBans.js');
@@ -24,10 +24,7 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.hasPermission('BAN_MEMBERS') && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
-            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
-            else return;
-        };
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.hasPermission('BAN_MEMBERS') && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
         
         if(!args[0]) return message.channel.error(message, `Bir kullanıcı ID'si belirtmelisin!`, { timeout: 8000, reply: true, react: true });
 
@@ -53,7 +50,7 @@ module.exports = {
 
         };
 
-        message.channel.success(message, Embed.setDescription(`\`${bannedUser.user.tag}\` kullanıcısının yasağı, ${message.author.toString()} tarafından kaldırıldı! \`(Ceza ID : ${!penal ? `Veri Bulunamadı` : `#${penal.id}`})\``), { react: true });
+        message.channel.true(message, Embed.setDescription(`\`${bannedUser.user.tag}\` kullanıcısının yasağı, ${message.author.toString()} tarafından kaldırıldı! \`(Ceza ID : ${!penal ? `Veri Bulunamadı` : `#${penal.id}`})\``), { react: true });
 
         if(log) client.channels.cache.get(log).send(Embed.setColor('#00FF00').setFooter('').setImage(unbanGifs.random()).setDescription(`
 \`${bannedUser.user.username}\` kullanıcısının **yasağı** kaldırıldı!

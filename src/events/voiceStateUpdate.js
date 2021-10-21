@@ -40,15 +40,15 @@ module.exports = async (oldState, newState) => {
         let vLog = client.channels.cache.get(voiceLog);
 
         if(!vLog) return;
-        if(!oldState.channel && newState.channel) return vLog.send(`${joined ? joined : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı **ses kanalına girdi!**`);
+        if(!oldState.channel && newState.channel) return vLog.send(`${joined} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı **ses kanalına girdi!**`);
         
         if(oldState.channel && !newState.channel) {
 
             let audit = await newState.guild.fetchAuditLogs();
             let entry = audit.entries.first();
-            if(entry && entry.action == 'MEMBER_DISCONNECT' && entry.executor.id !== client.user.id) return vLog.send(`${leaved ? leaved : ``} \`${newState.member.displayName}\` üyesinin ${oldState.channel.toString()} adlı ses kanalındaki bağlantısı \`${newState.guild.members.cache.get(entry.executor.id).displayName}\` tarafından **kesildi!**`);
+            if(entry && entry.action == 'MEMBER_DISCONNECT' && entry.executor.id !== client.user.id) return vLog.send(`${leaved} \`${newState.member.displayName}\` üyesinin ${oldState.channel.toString()} adlı ses kanalındaki bağlantısı \`${newState.guild.members.cache.get(entry.executor.id).displayName}\` tarafından **kesildi!**`);
             if(entry && entry.action == 'MEMBER_DISCONNECT' && entry.executor.id == client.user.id) return;
-            return vLog.send(`${leaved ? leaved : ``} \`${newState.member.displayName}\` üyesi ${oldState.channel.toString()} adlı **ses kanalından ayrıldı!**`);
+            return vLog.send(`${leaved} \`${newState.member.displayName}\` üyesi ${oldState.channel.toString()} adlı **ses kanalından ayrıldı!**`);
 
         };
 
@@ -56,24 +56,22 @@ module.exports = async (oldState, newState) => {
 
             let audit = await newState.guild.fetchAuditLogs();
             let entry = audit.entries.first();
-            if(entry && entry.action == 'MEMBER_MOVE' && entry.executor.id !== newState.id && entry.executor.id !== client.user.id) return vLog.send(`${changeState ? changeState : `:arrow_up_down:`} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(entry.executor.id).displayName}\` tarafından ${oldState.channel.toString()} adlı ses kanalından ${newState.channel.toString()} adlı ses kanalına **taşındı!**`);
+            if(entry && entry.action == 'MEMBER_MOVE' && entry.executor.id !== newState.id && entry.executor.id !== client.user.id) return vLog.send(`${changeState} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(entry.executor.id).displayName}\` tarafından ${oldState.channel.toString()} adlı ses kanalından ${newState.channel.toString()} adlı ses kanalına **taşındı!**`);
             
-            if(!entry || entry.executor.id !== client.user.id) return vLog.send(`${changeState ? changeState : `:arrow_up_down:`} \`${newState.member.displayName}\` üyesi ${oldState.channel.toString()} adlı ses kanalından ${newState.channel.toString()} adlı ses kanalına **geçiş yaptı!**`);
+            if(!entry || entry.executor.id !== client.user.id) return vLog.send(`${changeState} \`${newState.member.displayName}\` üyesi ${oldState.channel.toString()} adlı ses kanalından ${newState.channel.toString()} adlı ses kanalına **geçiş yaptı!**`);
 
         };
 
-        if(oldState.channel.id && oldState.selfDeaf && !newState.selfDeaf) return vLog.send(`${unDeafen ? unDeafen : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kulaklığını açtı!**`);
-        if(oldState.channel.id && !oldState.selfDeaf && newState.selfDeaf) return vLog.send(`${deafen ? deafen : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kulaklığını kapattı!**`);
-        if(oldState.channel.id && oldState.selfMute && !newState.selfMute) return vLog.send(`${unMuted ? unMuted : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **mikrofonunu açtı!**`);
-        if(oldState.channel.id && !oldState.selfMute && newState.selfMute) return vLog.send(`${muted ? muted : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **mikrofonunu kapattı!**`);
+        if(oldState.channel.id && oldState.selfDeaf && !newState.selfDeaf) return vLog.send(`${unDeafen} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kulaklığını açtı!**`);
+        if(oldState.channel.id && !oldState.selfDeaf && newState.selfDeaf) return vLog.send(`${deafen} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kulaklığını kapattı!**`);
+        if(oldState.channel.id && oldState.selfMute && !newState.selfMute) return vLog.send(`${unMuted} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **mikrofonunu açtı!**`);
+        if(oldState.channel.id && !oldState.selfMute && newState.selfMute) return vLog.send(`${muted} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **mikrofonunu kapattı!**`);
 
         if(oldState.channel.id && oldState.serverMute && !newState.serverMute) {
             
             let audit = await newState.guild.fetchAuditLogs({ type: 'MEMBER_UPDATE' });
             let executor = audit.entries.first().executor;
-            
-            if(executor.id == global.client.user.id) return;
-            else return vLog.send(`${unMuted ? unMuted : ``} \`${newState.member.displayName}\` üyesinin ${newState.channel.toString()} adlı ses kanalındaki susturulması \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından **kaldırıldı!**`);
+            return vLog.send(`${unMuted} \`${newState.member.displayName}\` üyesinin ${newState.channel.toString()} adlı ses kanalındaki susturulması \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından **kaldırıldı!**`);
 
         };
 
@@ -81,9 +79,7 @@ module.exports = async (oldState, newState) => {
             
             let audit = await newState.guild.fetchAuditLogs({ type: 'MEMBER_UPDATE' });
             let executor = audit.entries.first().executor;
-
-            if(executor.id == global.client.user.id) return;
-            else return vLog.send(`${muted ? muted : ``} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından ${newState.channel.toString()} adlı ses kanalında **susturuldu!**`);
+            return vLog.send(`${muted} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından ${newState.channel.toString()} adlı ses kanalında **susturuldu!**`);
 
         };
 
@@ -91,7 +87,7 @@ module.exports = async (oldState, newState) => {
             
             let audit = await newState.guild.fetchAuditLogs({ type: 'MEMBER_UPDATE' });
             let executor = audit.entries.first().executor;
-            return vLog.send(`${unDeafen ? unDeafen : ``} \`${newState.member.displayName}\` üyesinin ${newState.channel.toString()} adlı ses kanalındaki sağırlığı \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından **kaldırıldı!**`);
+            return vLog.send(`${unDeafen} \`${newState.member.displayName}\` üyesinin ${newState.channel.toString()} adlı ses kanalındaki sağırlığı \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından **kaldırıldı!**`);
 
         };
 
@@ -99,14 +95,14 @@ module.exports = async (oldState, newState) => {
             
             let audit = await newState.guild.fetchAuditLogs({ type: 'MEMBER_UPDATE' });
             let executor = audit.entries.first().executor;
-            return vLog.send(`${deafen ? deafen : ``} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından ${newState.channel.toString()} adlı ses kanalında **sağırlaştırıldı!**`);
+            return vLog.send(`${deafen} \`${newState.member.displayName}\` üyesi \`${newState.guild.members.cache.get(executor.id).displayName}\` tarafından ${newState.channel.toString()} adlı ses kanalında **sağırlaştırıldı!**`);
 
         };
 
-        if(oldState.channel.id && !oldState.streaming && newState.channel.id && newState.streaming) return vLog.send(`${stream ? stream : `:desktop:`} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **yayın açtı!**`);
-        if(oldState.channel.id && oldState.streaming && newState.channel.id && !newState.streaming) return vLog.send(`${stream ? stream : `:desktop:`} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **yayını kapattı!**`);
-        if(oldState.channel.id && !oldState.selfVideo && newState.channel.id && newState.selfVideo) return vLog.send(`${camera ? camera : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kamerasını açtı!**`);
-        if(oldState.channel.id && oldState.selfVideo && newState.channel.id && !newState.selfVideo) return vLog.send(`${camera ? camera : ``} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kamerasını kapattı!**`);
+        if(oldState.channel.id && !oldState.streaming && newState.channel.id && newState.streaming) return vLog.send(`${stream} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **yayın açtı!**`);
+        if(oldState.channel.id && oldState.streaming && newState.channel.id && !newState.streaming) return vLog.send(`${stream} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **yayını kapattı!**`);
+        if(oldState.channel.id && !oldState.selfVideo && newState.channel.id && newState.selfVideo) return vLog.send(`${camera} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kamerasını açtı!**`);
+        if(oldState.channel.id && oldState.selfVideo && newState.channel.id && !newState.selfVideo) return vLog.send(`${camera} \`${newState.member.displayName}\` üyesi ${newState.channel.toString()} adlı ses kanalında **kamerasını kapattı!**`);
 
     };
 

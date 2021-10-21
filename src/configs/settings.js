@@ -3,20 +3,20 @@
  * @param { Client } client 
  */
 
- module.exports = (client) => {
+module.exports = (client) => {
 
     //General Settings
     client.settings = {
 
         "Prefix": ".",
-        "Token": "",
-        "Owners": [],
-        "OtherBots": [],
-        "VoiceChannel": "",
+        "Token": "ODc1NjgyMjQ2Mzk5NTE2Njk0.YRZEpA.YRYQoJtNoypkGZZtwu31ago9DU4",
+        "Owners": ["809325505304068096", "624914071984013313"],
+        "OtherBots": ["855074136065048597", "873189554700574741", "819623504630251570", "880140912238420008"],
+        "VoiceChannel": "836467888436019242",
         "Activity": "LISTENING",
         "Status": "idle",
-        "MongoURL": "",
-        "Footer": "SeonerVorteX",
+        "MongoURL": "mongodb+srv://seonervortex:aze1234321@cluster0.argb1.mongodb.net/vortexTest?retryWrites=true&w=majority",
+        "Footer": "VorteX",
         "DisableCooldownsForAdmins": true,
 
     };
@@ -30,7 +30,6 @@
 
     ];
 
-    //Emojis
     client.systemEmojis = [
 
         ///System
@@ -43,7 +42,7 @@
         { emojiName: 'mark2', emojiUrl: 'https://cdn.discordapp.com/emojis/853641429146140684.png?v=1' },
         { emojiName: 'cross', emojiUrl: 'https://cdn.discordapp.com/emojis/876153078863253514.gif?v=1' },
         { emojiName: 'cross2', emojiUrl: 'https://cdn.discordapp.com/emojis/853641452227264522.png?v=1' },
-        { emojiName: 'success', emojiUrl: 'https://cdn.discordapp.com/emojis/793774156067373066.gif?v=1' },
+        { emojiName: 'succes', emojiUrl: 'https://cdn.discordapp.com/emojis/793774156067373066.gif?v=1' },
 
         ///Status
         { emojiName: 'online', emojiUrl: 'https://cdn.discordapp.com/emojis/686601950275698692.png?v=1' },
@@ -65,7 +64,7 @@
         { emojiName: 'muted', emojiUrl: 'https://cdn.discordapp.com/emojis/871710451086524416.png?v=1' },
         { emojiName: 'unDeafen', emojiUrl: 'https://cdn.discordapp.com/emojis/871710450243502091.png?v=1' },
         { emojiName: 'deafen', emojiUrl: 'https://cdn.discordapp.com/emojis/871710450138619915.png?v=1' },
-        { emojiName: 'camera', emojiUrl: 'https://cdn.discordapp.com/emojis/839043294717542400.png?v=1' }
+        { emojiName: 'camera', emojiUrl: 'https://cdn.discordapp.com/emojis/839043294717542400.png?v=1' }, 
 
     ];
 
@@ -73,105 +72,103 @@
     client.guildSettings = {
 
         ///General
-        guildID: "",
-        guildTags: [],
-        guildDiscriminator: "",
-        guildTeams: [],
-        meetRole: "",
-        meetChannel: "",
-        nameTag: "",
-        dmMessages: true,
-        unAuthorizedMessages: true,
+        "guildID": "836467117393969163",
+        "guildTags": [],
+        "guildDiscriminator": "1927",
+        "guildTeams": [],
+        "guildChat": "",
+        "dmMessages": true,
 
         ///Staffs
-        staffRoles: [],
-        transporterSpears: [],
-        registerSpears: [],
-        staffGiver: "",
-        botYt: "",
+        "staffRoles": [],
+        "staffGivers": [],
+        "transporterSpears": [],
+        "registerSpears": [],
+        "botYt": "836467869633085480",
 
         ///Penals
-        penals: {
+        "penals": {
 
             ///Ban
-            ban: {
-                staffs: [],
-                penalPoint: 40,
-                penalLimit: 5,
-                log: "",
-                banGifs: ['https://media1.tenor.com/images/ed33599ac8db8867ee23bae29b20b0ec/tenor.gif?itemid=14760307', 'https://media.giphy.com/media/fe4dDMD2cAU5RfEaCU/giphy.gif', 'https://media1.tenor.com/images/4732faf454006e370fa9ec6e53dbf040/tenor.gif?itemid=14678194'],
-                unbanGifs: ['https://data.whicdn.com/images/192611812/original.gif'],
+            "ban": {
+                "staffs": [],
+                "penalPoint": 40,
+                "penalLimit": 0,
+                "log": "836467895156211772",
+                "banGifs": ['https://media1.tenor.com/images/ed33599ac8db8867ee23bae29b20b0ec/tenor.gif?itemid=14760307', 'https://media.giphy.com/media/fe4dDMD2cAU5RfEaCU/giphy.gif', 'https://media1.tenor.com/images/4732faf454006e370fa9ec6e53dbf040/tenor.gif?itemid=14678194'],
+                "unbanGifs": ['https://data.whicdn.com/images/192611812/original.gif'],
             },
 
             ///Jail
-            jail: {
-                staffs: [],
-                jailRoles: [],
-                jailChannel: "",
-                penalPoint: 30,
-                penalLimit: 5,
-                log: "",
+            "jail": {
+                "staffs": ['836467871127306290'],
+                "jailRoles": ['836467875647848459'],
+                "jailChannel": "836467895156211772",
+                "penalPoint": 30,
+                "penalLimit": 0,
+                "log": "836467895156211772",
             },
 
             ///Chat Mute
-            chatMute: {
-                staffs: [],
-                cmuteRoles: [],
-                penalPoint: 20,
-                penalLimit: 5,
-                log: "",
+            "chatMute": {
+                "staffs": [],
+                "cmuteRoles": ['836467875647848459'],
+                "penalPoint": 20,
+                "penalLimit": 1,
+                "log": "836467895156211772",
             },
 
             ///Voice Mute
-            voiceMute: {
-                staffs: [],
-                vmuteRoles: [],
-                penalPoint: 20,
-                penalLimit: 5,
-                log: "",
+            "voiceMute": {
+                "staffs": [],
+                "vmuteRoles": ['836467875647848459'],
+                "penalPoint": 20,
+                "penalLimit": 0,
+                "log": "836467895156211772",
             },
 
             ///Warn
-            warn: {
-                staffs: [],
-                warnRoles: [{
-                    warnCount: 1,
-                    warnRole: "", 
+            "warn": {
+                "staffs": [],
+                "warnRoles": [{
+                    "warnCount": 1,
+                    "warnRole": "836467874267922443", 
                 }, {
-                    warnCount: 2,
-                    warnRole: "",
+                    "warnCount": 2,
+                    "warnRole": "836467873618722866",
                 }, {
-                    warnCount: 3,
-                    warnRole: "",
+                    "warnCount": 3,
+                    "warnRole": "836467872665829378",
                 }],
-                penalPoint: 10,
-                log: "",
+                "penalPoint": 10,
+                "log": "836467895156211772",
             },
 
         },
 
         ///Registration
-        registration: {
-            unregisterName: "",
-            unregisterRoles: [],
-            unregisterChannel: "",
-            quarantineRole: "",
-            familyRole: "",
+        "registration": {
+            "unregisterName": "",
+            "unregisterRoles": ["836467876432445470"],
+            "unregisterChannel": "",
+            "quarantineRole": "",
+            "familyRole": "",
         },
 
         ///Forbidden Tag
-        forbiddenTag: {
-            forbidRoles: [],
-            forbidChannel: "",
-            forbidLog: "",
+        "forbiddenTag": {
+            "forbidRoles": ['836467875647848459'],
+            "forbidChannel": "836467895156211772",
+            "forbidLog": "836467895156211772",
         },
 
         ///Logs
-        logs: {
-            pointLog: "",
-            voiceLog: "",
-            messageLog: "",
-            securityLog: "",
+        "logs": {
+            "pointLog": "836467895156211772",
+            "voiceLog": "836467895156211772",
+            "messageLog": "836467895156211772",
+            "buttonLog": "836467895156211772",
+            "securityLog": "836467895156211772",
         },
 
     };

@@ -1,6 +1,6 @@
 const { Owners } = global.client.settings;
-const { unAuthorizedMessages, botYt, penals } = global.client.guildSettings;
-const { staffs } = penals.warn;
+const { botYt, penals } = global.client.guildSettings;
+const { staffs, warnRoles } = penals.warn;
 const Penals = require('../../schemas/penals.js');
 const moment = require('moment');
 require('moment-duration-format');
@@ -23,19 +23,16 @@ module.exports = {
     
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
-            if(unAuthorizedMessages) return message.channel.error(message, Embed.setDescription(`Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`), { timeout: 10000 });
-            else return;
-        };
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
 
         let user = message.mentions.members.first() || message.mentions.users.first() || message.guild.members.cache.get(args[0]) || client.users.cache.get(args[0]) || await client.fetchUser(args[0]).then(user => user);
 
-        if(!args[0]) return message.channel.error(message, Embed.setDescription(`Bir üye belirtmelisin!`), { timeout: 8000, react: true });
-        if(!user) return message.channel.error(message, Embed.setDescription(`Geçerli bir üye belirtmelisin`), { timeout: 8000, react: true });
+        if(!args[0]) return message.channel.error(message, `Bir üye belirtmelisin!`, { timeout: 8000, reply: true, react: true });
+        if(!user) return message.channel.error(message, `Geçerli bir üye belirtmelisin`, { timeout: 8000, reply: true, react: true });
 
         let penal = await Penals.find({ guildID: message.guild.id, userID: user.id, type: 'WARN' });
 
-        if(!penal.length) return message.channel.error(message, Embed.setDescription(`Belirtilen üye daha önce uyarılmamış`), { timeout: 8000, react: true });
+        if(!penal.length) return message.channel.error(message, `Belirtilen üye daha önce uyarılmamış`, { timeout: 8000, react: true });
 
         let currentPage = 1;
         let description = `
@@ -43,7 +40,7 @@ module.exports = {
 
 **Ceza ID :** \`#${penal[0].id}\`
 **Uyarılan Kullanıcı :** \`${user.user.tag} (${user.user.id})\`
-**Uyaran Yetkili :** \`${client.users.cache.get(penal[0].staffID).tag} (${client.users.cache.get(penal[0].staffID).id})\`
+**Uyaran Yetkili :** \`${client.users.cache.get(penal[0].staff).tag} (${client.users.cache.get(penal[0].staff).id})\`
 **Uyarılma Tarihi :** \`${moment(penal[0].date).format(`DD MMMM YYYY (HH:mm)`)}\`
 **Uyarılma Sebebi :** \`${!penal[0].reason ? 'Belirtilmedi!' : penal[0].reason}\`
         `;
@@ -70,7 +67,7 @@ module.exports = {
 
 **Ceza ID :** \`#${penal[currentPage-1].id}\`
 **Uyarılan Kullanıcı :** \`${user.user.tag} (${user.user.id})\`
-**Uyaran Yetkili :** \`${client.users.cache.get(penal[currentPage-1].staffID).tag} (${client.users.cache.get(penal[currentPage-1].staffID).id})\`
+**Uyaran Yetkili :** \`${client.users.cache.get(penal[currentPage-1].staff).tag} (${client.users.cache.get(penal[currentPage-1].staff).id})\`
 **Uyarılma Tarihi :** \`${moment(penal[currentPage-1].date).format(`DD MMMM YYYY (HH:mm)`)}\`
 **Uyarılma Sebebi :** \`${!penal[currentPage-1].reason ? 'Belirtilmedi!' : penal[currentPage-1].reason}\`
                 `)).catch(err => {});
@@ -87,7 +84,7 @@ module.exports = {
                 
 **Ceza ID :** \`#${penal[currentPage-1].id}\`
 **Uyarılan Kullanıcı :** \`${user.user.tag} (${user.user.id})\`
-**Uyaran Yetkili :** \`${client.users.cache.get(penal[currentPage-1].staffID).tag} (${client.users.cache.get(penal[currentPage-1].staffID).id})\`
+**Uyaran Yetkili :** \`${client.users.cache.get(penal[currentPage-1].staff).tag} (${client.users.cache.get(penal[currentPage-1].staff).id})\`
 **Uyarılma Tarihi :** \`${moment(penal[currentPage-1].date).format(`DD MMMM YYYY (HH:mm)`)}\`
 **Uyarılma Sebebi :** \`${!penal[currentPage-1].reason ? 'Belirtilmedi!' : penal[currentPage-1].reason}\`
                 `)).catch(err => {});

@@ -1,5 +1,3 @@
-const { developer } = require('../../configs/emojis.json');
-
 module.exports = {
     name: 'help',
     aliases: ['yardım', 'komutlar'],
@@ -17,23 +15,25 @@ module.exports = {
     execute(client, message, args, Embed) {
 
         Embed.setDescription(`
+**Toplam Komut Sayısı :** \`${client.commands.filter(command => command.category !== 'Developer').size}\`
+
 **Admin Komutları**
-\`${client.commands.filter(command => command.category && command.category == 'Admin').map(command => `${client.settings.Prefix}${command.name}${!command.usage ? `` : ` ${command.usage}`}`).join(`\n`)}\`
+\`${client.commands.filter(command => command.category && command.category == 'Admin').map(command => `${client.settings.Prefix}${command.name} ${!command.usage ? "" : command.usage}`).join(`\n`)}\`
 
 **Ceza Komutları**
-\`${client.commands.filter(command => command.category && command.category == 'Ceza').map(command => `${client.settings.Prefix}${command.name}${!command.usage ? `` : ` ${command.usage}`}`).join(`\n`)}\`
+\`${client.commands.filter(command => command.category && command.category == 'Ceza').map(command => `${client.settings.Prefix}${command.name} ${!command.usage ? "" : command.usage}`).join(`\n`)}\`
 
 **Yetkili Komutları**
-\`${client.commands.filter(command => command.category && command.category == 'Yetkili').map(command => `${client.settings.Prefix}${command.name}${!command.usage ? `` : ` ${command.usage}`}`).join(`\n`)}\`
+\`${client.commands.filter(command => command.category && command.category == 'Yetkili').map(command => `${client.settings.Prefix}${command.name} ${!command.usage ? "" : command.usage}`).join(`\n`)}\`
 
 **Bilgi Komutları**
-\`${client.commands.filter(command => command.category && command.category == 'Bilgi').map(command => `${client.settings.Prefix}${command.name}${!command.usage ? `` : ` ${command.usage}`}`).join(`\n`)}\`
+\`${client.commands.filter(command => command.category && command.category == 'Bilgi').map(command => `${client.settings.Prefix}${command.name} ${!command.usage ? "" : command.usage}`).join(`\n`)}\`
 
 **Kullanıcı Komutları**
-\`${client.commands.filter(command => command.category && command.category == 'Kullanıcı').map(command => `${client.settings.Prefix}${command.name}${!command.usage ? `` : ` ${command.usage}`}`).join(`\n`)}\`
-        `);
+\`${client.commands.filter(command => command.category && command.category == 'Kullanıcı').map(command => `${client.settings.Prefix}${command.name} ${!command.usage ? "" : command.usage}`).join(`\n`)}\`
+        `)
 
-        message.channel.success(message, Embed.setFooter(`${client.settings.Footer} • ${message.author.username} tarafından istendi`), { react: true });
+        message.channel.true(message, Embed.setFooter(`${client.settings.Footer} • ${message.author.username} tarafından istendi`), { react: true });
 
     },
 };

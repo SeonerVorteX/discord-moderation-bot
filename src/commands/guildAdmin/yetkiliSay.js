@@ -13,27 +13,26 @@ module.exports = {
      * @param { Client } client 
      * @param { Message } message 
      * @param { Array<String> } args 
+     * @param { MessageEmbed } Embed 
      */
 
-    async execute(client, message, args) {
+    async execute(client, message, args, Embed) {
 
         let members = message.guild.members.cache.filter(member => !member.user.bot && (staffRoles.some(role => member.roles.cache.has(role)) || transporterSpears.some(role => member.roles.cache.has(role)) || registerSpears.some(role => member.roles.cache.has(role)) || member.roles.cache.has(botYt) || member.hasPermission('MANAGE_ROLES')) && member.user.presence.status !== 'offline');
         
-        if(args[0] && ['dm', 'dm-at'].some(arg => args[0].toLowerCase() == arg)) {
+        if(args[0] && ['dm'].some(arg => args[0] == arg)) {
             
-            message.channel.success(message, `Aktif olup seste bulunmayan **${members.size}** yetkili bulunuyor. Yetkililerin listesi :\n\n${members.map(member => member.toString()).join(`\n`)}\n\n**Yetkililere DM aracılığıyla haber verilmeye başlanıldı!**`);
-            let index = 0;
-            members.forEach(async member => {
+            message.channel.true(message, `Aktif olup seste bulunmayan **${members.size}** yetkili bulunuyor. Yetkililerin listesi :\n\n${members.map(member => member.toString()).join(`\n`)}\n\n**Yetkililere DM aracılığıyla haber verilmeye başlanıldı!**`);
+            members.forEach(async (member, index) => {
 
-                index += 1;
-                await client.wait(index * 500);
+                client.wait(index * 1000);
                 member.send(`Merhabalar, sunucumuzun ses aktifliğini arttırmak için lütfen müsaitsen public odalara değilsen özel odalara geçebilirmisin?`).catch(err => message.channel.send(`${member.toString()} adlı yetkiliye DM aracılığıyla ulaşamadım. Müsaitsen public odalara değilsen özel odalara geçebilirmisin?`));
 
             });
 
         } else if(args[0] || !args[0]) {
 
-            message.channel.success(message, `Aktif olup seste bulunmayan **${members.size}** yetkili bulunuyor. Yetkililerin listesi :\n\n${members.map(member => member.toString()).join(`\n`)}`);
+            message.channel.true(message, `Aktif olup seste bulunmayan **${members.size}** yetkili bulunuyor. Yetkililerin listesi :\n\n${members.map(member => member.toString()).join(`\n`)}`);
 
         };
 
