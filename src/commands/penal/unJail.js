@@ -1,6 +1,6 @@
-const { Owners, Prefix } = global.client.settings;
-const { botYt, dmMessages, penals, logs } = global.client.guildSettings;
-const { staffs, jailRoles, penalPoint, penalLimit, log } = penals.jail;
+const { Owners } = global.client.settings;
+const { unAuthorizedMessages, botYt, dmMessages, penals } = global.client.guildSettings;
+const { staffs, jailRoles, log } = penals.jail;
 const { unregisterRoles } = global.client.guildSettings.registration;
 const { jailed } = require('../../configs/emojis.json');
 const Penals = require('../../schemas/penals.js');
@@ -25,7 +25,10 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) return;
+        if(!Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt) && !staffs.some(role => message.member.roles.cache.has(role))) {
+            if(unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
+            else return;
+        };
 
         let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         let reason = args.slice(1).join(' ');
@@ -48,7 +51,7 @@ module.exports = {
 
         };
 
-        message.channel.true(message, Embed.setDescription(`${jailed} \`${user.user.tag}\` isimli kullanıcının jaili ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} kaldırıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
+        message.channel.success(message, Embed.setDescription(`${jailed ? jailed : ``} \`${user.user.tag}\` isimli kullanıcının jaili ${message.author.toString()} tarafından, ${!reason ? '' : `\`${reason}\` sebebiyle`} kaldırıldı! \`(Ceza ID : #${penal.id})\``), { react: true });
         if(log) client.channels.cache.get(log).send(Embed.setColor('#0000FF').setDescription(`
 ${user.toString()} kullanıcısının  **jaili** kaldırıldı!
 
@@ -60,7 +63,7 @@ ${user.toString()} kullanıcısının  **jaili** kaldırıldı!
 **Jailin Kaldırılma Sebebi :** \`${!reason ? 'Belirtilmedi!' : reason}\`
         `));
 
-        if(dmMessages) user.send(`${jailed} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, jailiniz kaldılırdı! \`(Ceza ID : #${penal.id})\``).catch(() => {});
+        if(dmMessages) user.send(`${jailed ? jailed : ``} \`${message.guild.name}\` sunucusunda, **${message.author.tag}** tarafından, jailiniz kaldılırdı! \`(Ceza ID : #${penal.id})\``).catch(() => {});
 
     },
 };

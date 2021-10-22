@@ -44,4 +44,4 @@ ${user.toString()} kullanıcısı ${executor.toString()} tarafından sağ tık i
 module.exports.conf = {
     name: 'Guild Ban Add',
     event: 'guildBanAdd'
-}
+};

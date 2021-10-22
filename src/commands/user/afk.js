@@ -25,7 +25,7 @@ module.exports = {
 
         await afk.findOneAndUpdate({ guildID: message.guild.id, userID: message.author.id }, { $set: { reason, date: Date.now() } }, { upsert: true });
 
-        message.channel.true(message, Embed.setDescription(`Başarıyla AFK oldunuz. Sebep : \`${!reason ? 'Belirtilmedi' : reason}\``), { timeout: 6000, react: true });
+        message.channel.success(message, Embed.setDescription(`Başarıyla AFK oldunuz. Sebep : \`${reason}\``), { timeout: 6000, react: true });
 
         if (message.member.manageable) message.member.setNickname(`[AFK] ${message.member.displayName}`);
 

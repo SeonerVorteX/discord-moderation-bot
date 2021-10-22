@@ -17,7 +17,7 @@ module.exports = {
 
         let user = message.mentions.users.first() || message.guild.members.cache.get(args[0]) || message.author;
 
-        message.channel.true(message, Embed.setFooter(``).setAuthor(user.username, client.user.avatarURL()).setImage(user.avatarURL({ dynamic: true, size: 256 })), { react: true });
+        message.channel.success(message, Embed.setFooter(``).setAuthor(user.username, client.user.avatarURL()).setImage(user.avatarURL({ dynamic: true, size: 256 })), { react: true });
 
     },
 };

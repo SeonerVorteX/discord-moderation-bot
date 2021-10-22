@@ -1,8 +1,11 @@
 const { TextChannel, DMChannel, Collection } = require("discord.js");
-const ms = require('parse-ms');
 const penals = require('../schemas/penals.js');
+const alarms = require('../schemas/alarms.js');
 const penalPoints = require('../schemas/penalPoints.js');
 const { mark, cross } = require('../configs/emojis.json');
+const moment = require('moment');
+require('moment-duration-format');
+moment.locale('tr');
 
 module.exports = async (client) => {
 
@@ -12,11 +15,11 @@ module.exports = async (client) => {
 
     client.fetchUser = async (userID) => {
 
-        try {
-          return await client.users.fetch(userID).then(user => user);
-        } catch (err) {
-          return undefined;
-        };
+        try { 
+            return await client.users.fetch(userID).then(user => user);
+        } catch(err) {
+            return undefined;
+        }
 
     };
 
@@ -29,8 +32,8 @@ module.exports = async (client) => {
     client.fetchBan = async (guild, userID) => {
 
         try {
-            return await guild.fetchBan(userID).then(bannedUser => bannedUser);
-        } catch (err) {
+            return await guild.fetchBan(userID);
+        } catch(err) {
             return undefined;
         }
 
@@ -48,11 +51,26 @@ module.exports = async (client) => {
      * @param { Number } finishDate 
      */
 
-    client.newPenal = async (guildID, userID, type, active = true, staff, reason, temp = false, date = Date.now(), finishDate = undefined) => {
+    client.newPenal = async (guildID = client.guildSettings.guildID, userID, type, active = true, staffID, reason, temp = false, date = Date.now(), finishDate = undefined) => {
 
-        let id = await penals.find({ guildID });
-        id = id ? id.length + 1 : 1;
-        return await new penals({ id, userID, guildID, type, active, staff, reason, temp, date, finishDate }).save();
+        let Penals = await penals.find({ guildID });
+        let id = Penals ? Penals.length + 1 : 1;
+        return await new penals({ id, userID, guildID, type, active, staffID, reason, temp, date, finishDate }).save();
+
+    };
+
+    /**
+     * 
+     * @param { String } guildID 
+     * @param { String } userID 
+     * @param { String } reason 
+     * @param { Number } startDate 
+     * @param { Number } finishDate 
+     */
+
+    client.newAlarm = async (guildID = client.guildSettings.guildID, userID, channelID, reason, startDate = Date.now(), finishDate) => {
+
+        return await new alarms({ guildID: guildID, userID: userID, channelID: channelID, reason: reason, startDate: startDate, finishDate: finishDate }).save();
 
     };
 
@@ -64,38 +82,50 @@ module.exports = async (client) => {
 
     client.addPenalPoint = async (guildID = client.guildSettings.guildID, userID, penalPoint) => {
 
-        await penalPoints.findOneAndUpdate({ guildID, userID }, { $inc: { penalPoint: parseInt(penalPoint) } }, { upsert: true });
-        return await penalPoints.findOneAndUpdate({ guildID, userID });
+        await penalPoints.findOneAndUpdate({ guildID: guildID, userID: userID }, { $inc: { penalPoint: parseInt(penalPoint) } }, { upsert: true });
+        return await penalPoints.findOne({ guildID: guildID, userID: userID });
 
     };
 
     /**
-     * @param { Number } ms 
+     * @param { Number } time 
      */
 
-    client.wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    client.wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
     /**
      * @param { Number } time
      */
 
-    client.duration = async (time) => {
+    client.getTime = (time) => {
 
         if(!time) throw new ReferenceError("Time Is Not Defined");
-        let Date = ms(time);
-        let date = `${Date.days} gün, ${Date.hours} saat, ${Date.minutes} dakika, ${Date.seconds} saniye`;
-        
-        if(Date.days == 0 && Date.hours == 0 && Date.minutes == 0 && Date.seconds == 0) {
-            if(Date.milliseconds !== 0 || Date.microseconds !== 0 || Date.nanoseconds !== 0) {
-              return "1 saniye"
-            }
-        } else if(Date.days == 0 && Date.hours == 0 && Date.minutes == 0 && Date.seconds !== 0) {
-            return date.replace(`0 gün, 0 saat, 0 dakika, `, ``);
-        } else if(Date.days == 0 && Date.hours == 0 && Date.minutes !== 0){
-            return date.replace(`0 gün, 0 saat, `, ``);
-        } else if(Date.days == 0 && Date.hours !== 0){
-            return date.replace(`0 gün, `, ``);
-        } else return date;
+        if(isNaN(time) || time.toLocaleString().includes('-')) throw new TypeError("Invalid Argument : Time");
+
+        let date = moment.duration(time)._data;
+
+        if(date.years) return `${date.years} yıl${date.months ? `, ${date.months} ay` : ``}`
+        if(date.months) return `${date.months} ay${date.days ? `, ${date.days} gün` : ``}`
+        if(date.days) return `${date.days} gün${date.hours ? `, ${date.hours} saat` : ``}`;
+        if(date.hours) return `${date.hours} saat${date.minutes ? `, ${date.minutes} dakika` : ``}`;
+        if(date.minutes) return date.minutes < 5 ? `birkaç dakika` : date.minutes > 45 ? `yaklaşık 1 saat` : `${date.minutes} dakika`;
+        if(date.seconds) return date.seconds < 15 ? `birkaç saniye` : date.seconds > 45 ? `yaklaşık 1 dakika` : `${date.seconds} saniye`;
+ 
+    };
+
+    /**
+     * @param { Number } time
+     * @param { Object } options
+     */
+
+     client.duration = async (time, options) => {
+
+        if(!time) throw new ReferenceError("Time Is Not Defined");
+        if(isNaN(time) || time.toLocaleString().includes('-')) throw new TypeError("Invalid Argument : Time");
+        if(options && typeof(options) !== "object") throw new TypeError('Invalid Argument: Options');
+
+        if(options && options.comma) return (moment.duration(time).format(`D [gün,] H [saat,] m [dakika,] s [saniye]`));
+        else return (moment.duration(time).format(`D [gün] H [saat] m [dakika] s [saniye]`));
 
     };
 
@@ -139,7 +169,7 @@ module.exports = async (client) => {
 
         if(!duration) throw new ReferenceError(`Duration Is Not Defined`);
 
-        duration.trim();
+        duration = duration.toLocaleString().trim();
 
         if(['m', 'minute', 'dk', 'dakika'].some(arg => duration.includes(arg))) {
 
@@ -197,26 +227,24 @@ module.exports = async (client) => {
     };
 
     /**
-     * @param { Collection } collection 
      * @param { String } dataName 
      * @param { Number } count 
      * @param { Object } options 
      */
 
-    Collection.prototype.add = async (collection, dataName, count, options) => {
+    Collection.prototype.add = async function(dataName, count, options = new Object()) {
 
-        if(!collection) throw new ReferenceError(`Collection Is Not Defined`);
         if(!dataName) throw new ReferenceError(`Collection Data Is Not Defined`);
 
-        let data = await collection.get(dataName);
+        let data = await this.get(dataName);
 
         if(!data && !options) throw new ReferenceError(`Data Not Found`);
         if(!count) throw new ReferenceError(`Count Is Not Defined`);
         if(isNaN(count) || count == 0 || count.toLocaleString().includes('-')) throw new SyntaxError('Invalid Argument: Count')
         if(!options) {
             
-            collection.set(dataName, parseInt(data)+parseInt(count));
-            return collection;
+            this.set(dataName, parseInt(data)+parseInt(count));
+            return this;
 
         } else {
 
@@ -225,8 +253,8 @@ module.exports = async (client) => {
             if(data[name] && (isNaN(data[name]) || data[name] == 0 || data[name].toLocaleString().includes('-'))) throw new Error('Data Is Not A Number');
 
             data[name] = parseInt(!data[name] ? 0 : data[name]) + parseInt(count);
-            collection.set(dataName, data);
-            return collection.get(dataName);
+            this.set(dataName, data);
+            return this.get(dataName);
 
         };
 
@@ -234,16 +262,40 @@ module.exports = async (client) => {
 
     /**
      * @param { Message } message 
+     * @param { Object } options
      */
 
-    TextChannel.prototype.wsend = async function (message) {
+     TextChannel.prototype.wsend = async function (message, options) {
 
-        const hooks = await this.fetchWebhooks();
-        let webhook = hooks.find(a => a.name === client.user.username && a.owner.id === client.user.id);
-        if (webhook) return hook.send(message);
-        else {
-            webhook = await this.createWebhook(client.user.username, { avatar: client.user.avatarURL() });
-            return webhook.send(message);
+        if(!message) throw new ReferenceError('Message Is Not Defined');
+        if(options && typeof(options) !== 'object') throw new SyntaxError('Invalid Argument: Options');
+
+        if(options) {
+
+            let name = options.name;
+            let avatar = options.avatar;
+
+            if(!name) name = client.user.username;
+            if(!avatar) avatar = client.user.avatarURL();
+
+            let hooks = await this.fetchWebhooks();
+            let webhook = hooks.find(hook => hook.name == name && hook.owner.id == client.user.id);
+            if (webhook) return webhook.send(message);
+            else {
+                webhook = await this.createWebhook(name, { avatar: avatar });
+                return webhook.send(message);
+            };
+            
+        } else {
+
+            let hooks = await this.fetchWebhooks();
+            let webhook = hooks.find(hook => hook.name === client.user.username && hook.owner.id === client.user.id);
+            if (webhook) return webhook.send(message);
+            else {
+                webhook = await this.createWebhook(client.user.username, { avatar: client.user.avatarURL() });
+                return webhook.send(message);
+            };
+
         };
 
     };
@@ -254,11 +306,11 @@ module.exports = async (client) => {
      * @param { Object } options 
      */
 
-    TextChannel.prototype.true = function (message, text, options) {
+    TextChannel.prototype.success = function (message, text, options = new Object()) {
 
         if(!message) throw new ReferenceError('Message Is Not Defined');
         if(!text) throw new ReferenceError('Text Is Not Defined');
-        if(!options) options = {}
+        if(typeof(options) !== 'object') throw new SyntaxError('Invalid Argument: Options')
 
         let reply = options.reply
         let time = options.timeout
@@ -266,36 +318,30 @@ module.exports = async (client) => {
         let deleteMsg = options.deleteMessage
 
         if(time && (isNaN(time) || time == 0 || time.toLocaleString().includes('-'))) throw new SyntaxError('Invalid Argument: Timeout');
-        if(reply && typeof(reply) !== "boolean") throw new SyntaxError('Invalid Argument: Author');
-        if(react && typeof(react) !== "boolean") throw new SyntaxError('Invalid Argument: React');
-        if(deleteMsg && typeof(deleteMsg) !== "boolean" && (isNaN(deleteMsg) || deleteMsg == 0 || deleteMsg.toLocaleString().includes('-'))) throw new SyntaxError('Invalid Argument: DeleteMessage');
-        if(reply) {
+        if(reply && typeof(reply) !== 'boolean') throw new SyntaxError('Invalid Argument: Author');
+        if(react && typeof(react) !== 'boolean') throw new SyntaxError('Invalid Argument: React');
+        if(deleteMsg && typeof(deleteMsg) !== 'boolean' && (isNaN(deleteMsg) || deleteMsg == 0 || deleteMsg.toLocaleString().includes('-'))) throw new SyntaxError('Invalid Argument: DeleteMessage');
 
+        if(react && mark) message.react(mark);
+        if(reply) {
+            
             if(!message.author) throw new TypeError('Invalid Argument: Message');
 
-            if(react) message.react(mark);
             message.reply(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
+                if(time) msg.delete({ timeout: parseInt(time) }).catch(() => {});
             });
-            if(message && deleteMsg) {
-
-                if(typeof(deleteMsg) == 'boolean') return message.delete();
-                else if(typeof(parseInt(deleteMsg)) !== 'boolean') return message.delete({ timeout: parseInt(deleteMsg) });
-
-            };
 
         } else {
 
-            if(react) message.react(mark);
             message.channel.send(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
+                if(time) msg.delete({ timeout: parseInt(time) }).catch(() => {});
             });
-            if(message && deleteMsg) {
 
-                if(typeof(deleteMsg) == 'boolean') return message.delete();
-                else if(typeof(parseInt(deleteMsg)) !== 'boolean') return message.delete({ timeout: parseInt(deleteMsg) });
+        };
+        if(message && deleteMsg) {
 
-            };
+            if(typeof(deleteMsg) == 'boolean') return message.delete().catch(() => {});
+            else if(typeof(parseInt(deleteMsg)) !== 'boolean') return message.delete({ timeout: parseInt(deleteMsg) }).catch(() => {});
 
         };
 
@@ -307,11 +353,11 @@ module.exports = async (client) => {
      * @param { Object } options 
      */
   
-    TextChannel.prototype.error =  function (message, text, options) {
+    TextChannel.prototype.error =  function (message, text, options = new Object()) {
 
         if(!message) throw new ReferenceError('Error Message Is Not Defined');
         if(!text) throw new ReferenceError('Error Text Is Not Defined');
-        if(!options) options = {}
+        if(typeof(options) !== 'object') throw new SyntaxError('Invalid Argument: Options');
 
         let time = options.timeout
         let reply = options.reply
@@ -319,28 +365,27 @@ module.exports = async (client) => {
         let keepMsg = options.keepMessage
 
         if(time && (isNaN(time) || time == 0 || time.toLocaleString().includes('-'))) throw new SyntaxError('Invalid Argument: Timeout');
-        if(reply && typeof(reply) !== "boolean") throw new SyntaxError('Invalid Argument: Author');
-        if(react && typeof(react) !== "boolean") throw new SyntaxError('Invalid Argument: React');
-        if(keepMsg && typeof(keepMsg) !== "boolean") throw new SyntaxError('Invalid Argument: KeepMessage');
+        if(reply && typeof(reply) !== 'boolean') throw new SyntaxError('Invalid Argument: Author');
+        if(react && typeof(react) !== 'boolean') throw new SyntaxError('Invalid Argument: React');
+        if(keepMsg && typeof(keepMsg) !== 'boolean') throw new SyntaxError('Invalid Argument: KeepMessage');
+
+        if(react && cross) message.react(cross);
         if(reply) {
 
             if(!message.author) throw new TypeError('Invalid Argument: Message');
 
-            if(react) message.react(cross);
             message.reply(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
+                if(time) msg.delete({ timeout: parseInt(time) }).catch(() => {});
             });
-            if(message && time && !keepMsg) return message.delete({ timeout: parseInt(time) });
 
         } else {
 
-            if(react) message.react(cross);
             message.channel.send(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
+                if(time) msg.delete({ timeout: parseInt(time) }).catch(() => {});
             });
-            if(message && time && !keepMsg) return message.delete({ timeout: parseInt(time) });
 
         };
+        if(message && time && !keepMsg) return message.delete({ timeout: parseInt(time) }).catch(() => {});
 
     };
 
@@ -350,36 +395,26 @@ module.exports = async (client) => {
      * @param { Object } options 
      */
 
-     DMChannel.prototype.true = function (message, text, options) {
+     DMChannel.prototype.success = function (message, text, options = new Object()) {
 
         if(!message) throw new ReferenceError('Message Is Not Defined');
         if(!text) throw new ReferenceError('Text Is Not Defined');
-        if(!options) options = {};
+        if(typeof(options) !== 'object') throw new SyntaxError('Invalid Argument: Options');
 
         let reply = options.reply;
-        let time = options.timeout;
         let react = options.react;
 
-        if(time && (isNaN(time) || time == 0 || time.toLocaleString().includes('-'))) throw new SyntaxError('Invalid Argument: Timeout');
-        if(reply && typeof(reply) !== "boolean") throw new SyntaxError('Invalid Argument: Author');
-        if(react && typeof(react) !== "boolean") throw new SyntaxError('Invalid Argument: React');
+        if(reply && typeof(reply) !== 'boolean') throw new SyntaxError('Invalid Argument: Author');
+        if(react && typeof(react) !== 'boolean') throw new SyntaxError('Invalid Argument: React');
+        
+        if(react && mark) message.react(mark);
         if(reply) {
-
+            
             if(!message.author) throw new TypeError('Invalid Argument: Message');
 
-            if(react) message.react(mark);
-            message.reply(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
-            });
+            message.reply(text);
 
-        } else {
-
-            if(react) message.react(mark);
-            message.channel.send(text).then(msg => {
-                if(time) msg.delete({ timeout: parseInt(time) });
-            });
-
-        };
+        } else message.channel.send(text);
 
     };
 
@@ -389,31 +424,26 @@ module.exports = async (client) => {
      * @param { Object } options 
      */
   
-    DMChannel.prototype.error =  function (message, text, options) {
+    DMChannel.prototype.error =  function (message, text, options = new Object()) {
 
         if(!message) throw new ReferenceError('Error Message Is Not Defined');
         if(!text) throw new ReferenceError('Error Text Is Not Defined');
-        if(!options) options = {};
+        if(typeof(options) !== 'object') throw new SyntaxError('Invalid Argument: Options');
 
-        let time = options.timeout;
         let reply = options.reply;
         let react = options.react;
 
-        if(reply && typeof(reply) !== "boolean") throw new SyntaxError('Invalid Argument: Author');
-        if(react && typeof(react) !== "boolean") throw new SyntaxError('Invalid Argument: React');
+        if(reply && typeof(reply) !== 'boolean') throw new SyntaxError('Invalid Argument: Author');
+        if(react && typeof(react) !== 'boolean') throw new SyntaxError('Invalid Argument: React');
+        
+        if(react && cross) message.react(cross);
         if(reply) {
 
             if(!message.author) throw new TypeError('Invalid Argument: Message');
 
-            if(react) message.react(cross);
             message.reply(text);
 
-        } else {
-
-            if(react) message.react(cross);
-            message.channel.send(text);
-
-        };
+        } else message.channel.send(text);
 
     };
 
@@ -424,22 +454,33 @@ module.exports = async (client) => {
     };
 
     /**
-     * @param { Number } chunk_size 
+     * @param { String } element 
      */
 
-    Array.prototype.chunk = function(chunk_size) {
+    Array.prototype.has = function(element) {
 
-        let myArray = Array.from(this);
-        let tempArray = [];
+        if(!element) throw new ReferenceError("Element Is Not Defined");
+        if(this.some(arrayElement => arrayElement == element)) return true;
+        else return false;
 
-        for (let index = 0; index < myArray.length; index += chunk_size) {
+    };
 
-            let chunk = myArray.slice(index, index + chunk_size);
-            tempArray.push(chunk);
+    /**
+     * @param { Number } chunkSize 
+     */
+
+    Array.prototype.chunk = function(chunkSize) {
+
+        let array = new Array();
+
+        for (let index = 0; index < this.length; index += chunkSize) {
+
+            let chunk = this.slice(index, index + chunkSize);
+            array.push(chunk);
 
         };
 
-        return tempArray;
+        return array;
         
     };
 

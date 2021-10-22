@@ -16,28 +16,34 @@ module.exports = {
 
     async execute(client, message, args) {
 
-        message.channel.send(`**Sistem emojileri kurulmaya başladı**`).then(async msg => {
+        message.channel.send(`**Sistem emojileri kurulmaya başladı** ${emojis.loading ? emojis.loading : ``}`).then(async msg => {
 
-            await systemEmojis.forEach(async (systemEmoji, index)=> {
+            await new Promise(async (resolve) => {
 
-                if(message.guild.emojis.cache.find(e => e.name == systemEmoji.emojiName)) emojis[systemEmoji.emojiName] = message.guild.emojis.cache.find(e => e.name == systemEmoji.emojiName).toString();
-                else {
+                systemEmojis.filter(systemEmoji => !emojis[systemEmoji.emojiName]).forEach(async (systemEmoji, index)=> {
 
-                    client.wait(index * 250);
-                    await message.guild.emojis.create(systemEmoji.emojiUrl, systemEmoji.emojiName).then(emoji => {
+                    if(message.guild.emojis.cache.find(e => e.name == systemEmoji.emojiName)) emojis[systemEmoji.emojiName] = message.guild.emojis.cache.find(e => e.name == systemEmoji.emojiName).toString();
+                    else {
 
-                        emojis[emoji.name] = emoji.toString();
-                        writeFile('./src/configs/emojis.json', JSON.stringify(emojis, null, 2), err => {
-                            if(err) console.log(err);
+                        await client.wait(index * 250);
+                        await message.guild.emojis.create(systemEmoji.emojiUrl, systemEmoji.emojiName).then(emoji => {
+
+                            emojis[emoji.name] = emoji.toString();
+                            writeFile('./src/configs/emojis.json', JSON.stringify(emojis, null, 2), err => {
+                                if(err) console.log(err);
+                            });
+
                         });
 
-                    });
+                    };
+                    
+                });
 
-                };
+                await client.wait(systemEmojis.filter(systemEmoji => !emojis[systemEmoji.emojiName]).length * 250).then(() => resolve())
                 
             });
 
-            msg.edit(`**Sistem emojileri başarıyla kuruldu ${emojis['mark']}**`);
+            msg.edit(`**Sistem emojileri başarıyla kuruldu ${emojis['success']}**`);
     
         });
 

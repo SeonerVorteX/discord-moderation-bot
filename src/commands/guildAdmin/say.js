@@ -28,12 +28,12 @@ module.exports = {
         let boostSize = message.guild.premiumSubscriptionCount;
         let boostLevel = message.guild.premiumTier;
 
-        message.channel.true(message, Embed.setAuthor(message.author.username, message.author.avatarURL({ dynamic: true })).setTitle(`${message.guild.name} Bilgileri :`).setThumbnail(message.guild.iconURL({ dynamic: true })).setFooter(`${Footer} • ${message.author.username} tarafından istendi`).setDescription(`
-${crown} Sunucuda Toplam **${totalMembers}** Üye Var
-${crown} Sunucuda Toplam **${onlineMembers}** Çevrimiçi Üye Var
-${crown} Sunucuda Toplam **${tagMembers}** Taglı Üye Var
-${crown} Sunucudaki Ses Kanallarında **${voiceMembers}** ( **+${botMembers}** Bot ) Üye Var
-${crown} Sunucuda Toplam **${boostSize}** ${!boostLevel || boostLevel == 0 ? `` : `( **${boostLevel}.** Seviye )`} Boost Var
+        message.channel.success(message, Embed.setAuthor(message.author.username, message.author.avatarURL({ dynamic: true })).setTitle(`${message.guild.name} Bilgileri :`).setThumbnail(message.guild.iconURL({ dynamic: true })).setFooter(`${Footer} • ${message.author.username} tarafından istendi`).setDescription(`
+${crown ? crown : ``}  Sunucuda Toplam **${totalMembers}** Üye Var
+${crown ? crown : ``}  Sunucuda Toplam **${onlineMembers}** Çevrimiçi Üye Var
+${crown ? crown : ``}  Sunucuda Toplam **${tagMembers}** Taglı Üye Var
+${crown ? crown : ``}  Sunucudaki Ses Kanallarında **${voiceMembers}** ( **+${botMembers}** Bot ) Üye Var
+${crown ? crown : ``}  Sunucuda Toplam **${boostSize}** ${!boostLevel || boostLevel == 0 ? `` : `( **${boostLevel}.** Seviye )`} Boost Var
         `), { react: true });
 
     },

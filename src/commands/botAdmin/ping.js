@@ -14,7 +14,7 @@ module.exports = {
 
     execute(client, message, args) {
 
-        message.react(mark);
+        if(mark) message.react(mark);
         message.channel.send(`Ping Hesaplanıyor ${loading ? loading : ``}`).then(msg => {
 
             msg.edit(`

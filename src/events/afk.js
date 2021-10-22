@@ -18,7 +18,7 @@ module.exports = async (message) => {
     if(afkData) {
 
         if(message.member.displayName.includes("[AFK]") && message.member.manageable) await message.member.setNickname(message.member.displayName.replace("[AFK]", ""));
-        message.channel.true(message, Embed.setDescription(`${message.member.toString()}, Başarıyla AFK modundan çıktın. Toplam **${moment.duration(Date.now() - afkData.date).format("d [gün] H [saat], m [dakika] s [saniyedir]")}** AFK'dın`), { timeout: 6000 });
+        message.channel.success(message, Embed.setDescription(`${message.member.toString()}, Başarıyla AFK modundan çıktın. Toplam **${moment.duration(Date.now() - afkData.date).format("d [gün,] H [saat,] m [dakika,] s [saniyedir]")}** AFK'dın`), { timeout: 6000 });
         await afk.deleteOne({ guildID: message.guild.id, userID: message.author.id });
     
     };
@@ -28,7 +28,7 @@ module.exports = async (message) => {
         let memberData = await afk.findOne({ guildID: message.guild.id, userID: member.id });
         if(memberData) {
 
-            message.channel.send(Embed.setDescription(`${member.toString()} kullanıcısı ${memberData.reason == 'Belirtilmedi' ? '' : `\`${memberData.reason}\` nedeniyle`}, **${moment.duration(Date.now() - memberData.date).format("d [gün] H [saat], m [dakika] s [saniye]")}** önce afk oldu!`));
+            message.channel.send(Embed.setDescription(`${member.toString()} kullanıcısı ${memberData.reason == 'Belirtilmedi' ? '' : `\`${memberData.reason}\` nedeniyle,`} **${moment.duration(Date.now() - memberData.date).format("d [gün] H [saat], m [dakika] s [saniye]")}** önce afk oldu!`));
 
         };
 
@@ -37,6 +37,6 @@ module.exports = async (message) => {
 };
 
 module.exports.conf = {
-    name: 'Afk',
+    name: 'AFK',
     event: 'message'
 };

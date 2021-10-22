@@ -68,4 +68,4 @@ module.exports = async (guild, user) => {
 module.exports.conf = {
     name: 'Guild Ban Remove',
     event: 'guildBanRemove'
-}
+};

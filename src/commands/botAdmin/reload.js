@@ -3,7 +3,7 @@ const { loading } = require('../../configs/emojis.json');
 
 module.exports = {
     name: 'reload',
-    aliases: ['restart'],
+    aliases: ['restart', 'reboot'],
     category: 'Developer',
     developer: true,
 
@@ -23,7 +23,7 @@ module.exports = {
 
         });
 
-        process.exit(0);
+        process.exit();
 
     },
 };

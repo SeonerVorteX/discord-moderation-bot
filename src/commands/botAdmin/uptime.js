@@ -14,8 +14,8 @@ module.exports = {
     
     async execute(client, message, args) {
 
-        let uptime = await client.duration(Date.now() - client.readyAt.getTime());
-        message.channel.true(message, `Sistem **${uptime}dir** aktif ${developer ? developer : ``}`);
+        let uptime = await client.duration(Date.now() - client.readyAt.getTime(), { comma: true });
+        message.channel.success(message, `Sistem **${uptime}dir** aktif ${developer ? developer : ``}`, { react: true });
 
     },
 };

@@ -1,3 +1,4 @@
+const { Footer } = global.client.settings;
 const { mark, mark2, cross2, muted, chatMuted, jailed, banned, warned } = require('../../configs/emojis.json');
 const penals = require('../../schemas/penals');
 const moment = require('moment');
@@ -6,7 +7,7 @@ moment.locale('tr');
 
 module.exports = {
     name: 'sicilbilgi',
-    aliases: ['sicil', 'sicil-bilgi'],
+    aliases: ['sicil', 'sicil-bilgi', 'cezalog', 'cezalılog'],
     category: 'Bilgi',
     usage: '<@Üye/ID>',
     permission: 'ADMINISTRATOR',
@@ -23,19 +24,19 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        let user = message.mentions.users.first() || message.guild.members.cache.get(args[0]);
+        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
 
-        if(args[0] && !user) return message.channel.error(message, `Geçerli bir üye belirtmelisin!`, { timeout: 8000, reply: true, react: true });
+        if(args[0] && !user) return message.channel.error(message, Embed.setDescription(`Geçerli bir üye belirtmelisin!`), { timeout: 8000, react: true });
 
         if(user) {
 
             let Penals = await penals.find({ guildID: message.guild.id, userID: user.id });
             
-            if(!Penals.length) return message.channel.true(message, Embed.setDescription(`${user.toString()} üyesinin herhangi bir ceza kaydı bulunmuyor!`), { react: true });
+            if(!Penals.length) return message.channel.success(message, Embed.setDescription(`${user.toString()} üyesinin herhangi bir ceza kaydı bulunmuyor!`), { react: true });
             
-            let firstPage = Penals.sort((a, b) => a.date - b.date).splice(0, 10).map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n');
-            message.react(mark);
-            message.channel.send(Embed.setDescription(firstPage).setFooter(`Sayfa : 1`)).then(async msg => {
+            let firstPage = Penals.sort((a, b) => a.date - b.date).splice(0, 10).map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almış`).join('\n\n');
+            if(mark) message.react(mark);
+            message.channel.send(Embed.setDescription(firstPage).setFooter(`${Footer} • Sayfa : 1`)).then(async msg => {
 
                 Penals = await penals.find({ guildID: message.guild.id, userID: user.id });
 
@@ -57,8 +58,8 @@ module.exports = {
                     currentPage--;
                     if(currentPage == 1 && msg) msg.edit(Embed.setDescription(firstPage));
                     else if (currentPage > 1 && msg) msg.edit(Embed.setDescription(`
-${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
-                    `).setFooter(`Sayfa : ${currentPage}`)).catch(err => {});
+${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almış`).join('\n\n')}
+                    `).setFooter(`${Footer} • Sayfa : ${currentPage}`)).catch(err => {});
                         
                 });
 
@@ -68,8 +69,8 @@ ${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mar
                     if (currentPage == pages.length) return;
                     currentPage++;
                     if (msg) msg.edit(Embed.setDescription(`
-${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
-                    `).setFooter(`Sayfa : ${currentPage}`)).catch(err => {});
+${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almış`).join('\n\n')}
+                    `).setFooter(`${Footer} • Sayfa : ${currentPage}`)).catch(err => {});
 
                 });
                         
@@ -101,11 +102,11 @@ ${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mar
 
             let Penals = await penals.find({ guildID: message.guild.id, userID: message.author.id });
             
-            if(!Penals.length) return message.channel.true(message, Embed.setDescription(`${message.author.toString()} Herhangi bir ceza kaydın bulunmuyor!`), { react: true });
+            if(!Penals.length) return message.channel.success(message, Embed.setDescription(`${message.author.toString()} Herhangi bir ceza kaydın bulunmuyor!`), { react: true });
             
-            let firstPage = Penals.sort((a, b) => a.date - b.date).splice(0, 10).map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n');
-            message.react(mark);
-            message.channel.send(Embed.setDescription(firstPage).setFooter(`Sayfa : 1`)).then(async msg => {
+            let firstPage = Penals.sort((a, b) => a.date - b.date).splice(0, 10).map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n');
+            if(mark) message.react(mark);
+            message.channel.send(Embed.setDescription(firstPage).setFooter(`${Footer} • Sayfa : 1`)).then(async msg => {
 
                 Penals = await penals.find({ guildID: message.guild.id, userID: message.author.id });
 
@@ -127,8 +128,8 @@ ${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mar
                     currentPage--;
                     if(currentPage == 1 && msg) msg.edit(Embed.setDescription(firstPenal));
                     else if (currentPage > 1 && msg) msg.edit(Embed.setDescription(`
-${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
-                    `).setFooter(`Sayfa : ${currentPage}`)).catch(err => {});
+${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
+                    `).setFooter(`${Footer} • Sayfa : ${currentPage}`)).catch(err => {});
                         
                 });
 
@@ -138,8 +139,8 @@ ${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mar
                     if (currentPage == Penals.length) return;
                     currentPage++;
                     if (msg) msg.edit(Embed.setDescription(`
-${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? mark2 : cross2} **[${penal.type}]** <@${penal.staff}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? banned : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? jailed : penal.type == 'CHAT-MUTE' ? chatMuted : penal.type == 'VOICE-MUTE' ? muted : warned } **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
-                    `).setFooter(`Sayfa : ${currentPage}`)).catch(err => {});
+${pages[currentPage-1].map(penal => `**[\`#${penal.id}\`]** ${penal.active ? (mark2 ? mark2 : ``) : (cross2 ? cross2 : ``)} **[${penal.type}]** <@${penal.staffID}> tarafından **${moment(penal.date).format("DD MMMM YYYY (HH:mm)")}** tarihinde ${!penal.reason || penal.reason == 'Belirtilmedi!' ? '' : `\`${penal.reason}\` sebebiyle`} ${penal.type == 'BAN' || penal.type == 'FORCE-BAN' ? (banned ? banned : ``) : penal.type == 'JAIL' || penal.type == 'TEMP-JAIL' ? (jailed ? jailed : ``) : penal.type == 'CHAT-MUTE' ? (chatMuted ? chatMuted : ``) : penal.type == 'VOICE-MUTE' ? (muted ? muted : ``) : (warned ? warned : ``)} **${penal.type.toLowerCase().replace("-", " ")}** cezası almışsın`).join('\n\n')}
+                    `).setFooter(`${Footer} • Sayfa : ${currentPage}`)).catch(err => {});
 
                 });
                         

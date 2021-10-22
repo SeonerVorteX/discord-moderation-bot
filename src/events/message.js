@@ -1,7 +1,7 @@
-const { MessageEmbed, Collection } = require('discord.js');
+const { Collection } = require('discord.js');
 const { client } = global;
 const { Prefix, Owners, DisableCooldownsForAdmins } = client.settings;
-const { staffRoles, botYt } = client.guildSettings;
+const { staffRoles, botYt, unAuthorizedMessages } = client.guildSettings;
 const embed = require('../utils/Embed.js');
 
 /**
@@ -12,13 +12,12 @@ module.exports = async (message) => {
 
 ///Process
     if (message.author.bot) return;
-
     if(!message.content.startsWith(Prefix)) return;
 
-    const args = message.content.slice(Prefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLocaleLowerCase();
-    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-    const Embed = embed(message.author.username, message.author.avatarURL({ dynamic: true }), false);
+    let args = message.content.slice(Prefix.length).trim().split(/ +/);
+    let commandName = args.shift().toLocaleLowerCase();
+    let command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && (commandName && cmd.aliases.has(commandName)));
+    let Embed = embed(message.author.username, message.author.avatarURL({ dynamic: true }), false);
 
     if(!command) return;
 
@@ -28,105 +27,85 @@ module.exports = async (message) => {
     if (command.developer && !Owners.includes(message.author.id)) {
         
         if (!command.returnMsg) return;
-        else return message.reply(command.returnMsg);
+        else return message.channel.error(message, command.returnMsg, { timeout: 10000 });
         
     };
 
     //Server Owner Control
-    if (command.guildOwner && message.channel.type == 'text' && message.guild.owner.id !== message.author.id && !Owners.includes(message.author.id)) {
+    if (command.guildOwner && message.channel.type == "text" && !Owners.includes(message.author.id) && message.guild.owner.id !== message.author.id) {
         
-        if (!command.returnMsg) return;
-        else return message.reply(command.returnMsg);
-        
+        if (unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu sadece sunucu sahibi kullana bilir!`, { timeout: 10000 });
+        else return;
     };
 
     //Permission Control
-    if (command.permission && message.channel.type == 'text' && !message.member.hasPermission(command.permission) && !message.member.hasPermission(8) && !Owners.includes(message.author.id) && !message.member.roles.cache.has(botYt)) {
+    if (command.permission && message.channel.type == "text" && !Owners.includes(message.author.id) && !message.member.hasPermission(command.permission) && !message.member.roles.cache.has(botYt)) {
         
-        if (!command.returnMsg) return;
-        else return message.channel.send(command.returnMsg);
+        if (unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
+        else return;
         
     };
 
     //Staff Control
-    if (command.staff && message.channel.type == 'text' && !Owners.includes(message.author.id) && !message.member.hasPermission('MANAGE_ROLES') && !message.member.roles.cache.has(botYt) && !staffRoles.some(role => message.member.roles.cache.has(role))) {
+    if (command.staff && message.channel.type == "text" && !Owners.includes(message.author.id) && !message.member.hasPermission('MANAGE_ROLES') && !message.member.roles.cache.has(botYt) && !staffRoles.some(role => message.member.roles.cache.has(role))) {
 
-        if (!command.returnMsg) return;
-        else return message.channel.send(command.returnMsg);
+        if (unAuthorizedMessages) return message.channel.error(message, `Maalesef, bu komutu kullana bilmek için yeterli yetkiye sahip değilsin!`, { timeout: 10000 });
+        else return;
 
     };
 
     //Guild Control
     if (command.guildOnly && message.channel.type == "dm") {
 
-        if (!command.returnMsg) return;
-        else return message.channel.send(command.returnMsg);
+        if (command.developer || command.guildOwner || command.permission || command.staff) return;
+        else return message.channel.error(message, `Bu komut yalnızca sunucu kanallarında çalışa bilmektedir!`);
 
     };
 
 //Operations
 
     //Cooldowns
-    if (!client.cooldowns.has(command.name)) {
-      
-        client.cooldowns.set(command.name, new Collection());
-        
-    };
+    if (!client.cooldowns.has(command.name)) client.cooldowns.set(command.name, new Collection());
   
-    const timestamps = client.cooldowns.get(command.name);
-    const now = Date.now();
-    const cooldownAmount = (command.cooldown) * 1000;
+    let timestamps = client.cooldowns.get(command.name);
+    let cooldownAmount = (command.cooldown) * 1000;
+    let now = Date.now();
   
     if (timestamps.has(message.author.id)) {
         
-        const expirationtime = timestamps.get(message.author.id) + cooldownAmount;
-      
+        let expirationtime = timestamps.get(message.author.id) + cooldownAmount;
+        let timeleft = (expirationtime - now) / 1000;
+
         if(DisableCooldownsForAdmins) {
         
-            if (expirationtime > now && !Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt)) {
-            
-                const timeleft = (expirationtime - now) / 1000;
-                parseInt(timeleft)
-                message.channel.error(message, `Bu komutu tekrar kullana bilmek için lütfen **${parseInt(timeleft) == 0 ? 1 : parseInt(timeleft)} saniye** bekleyin`, { timeout: 5000, reply: true, react: true });
-
-            };
+            if (expirationtime > now && !Owners.includes(message.author.id) && !message.member.hasPermission(8) && !message.member.roles.cache.has(botYt)) return message.channel.error(message, `Bu komutu tekrar kullana bilmek için lütfen **${parseInt(timeleft) == 0 ? 1 : parseInt(timeleft)} saniye** bekleyin!`, { timeout: 5000 });
         
         } else {
         
-            if (expirationtime > now) {
-            
-                const timeleft = (expirationtime - now) / 1000;
-                parseInt(timeleft)
-                message.channel.error(message, `Bu komutu tekrar kullana bilmek için lütfen **${parseInt(timeleft) == 0 ? 1 : parseInt(timeleft)} saniye** bekleyin`, { timeout: 5000, reply: true, react: true });
+            if (expirationtime > now && !Owners.includes(message.author.id)) return message.channel.error(message, `Bu komutu tekrar kullana bilmek için lütfen **${parseInt(timeleft) == 0 ? 1 : parseInt(timeleft)} saniye** bekleyin!`, { timeout: 5000 });
 
-            };
         };
         
     };
   
     timestamps.set(message.author.id, now);
-    setTimeout(() => {
-        
-        timestamps.delete(message.author.id);
-        
-    }, cooldownAmount);
+    client.wait(cooldownAmount).then(() => timestamps.delete(message.author.id));
 
     //Running Commands
-    try {
-        
-        command.execute(client, message, args, Embed);
-        
-    }
-    catch (e) {
-        
-        message.channel.error(message, `Bu komut çalıştırılırken bir hata oluştu. Lütfen durumla ilgili botun yapımcılarına haber verin ve biraz sonra tekrar deneyin`, { react: true });
-        Owners.filter(owner => owner !== '').forEach((owner, index) => {
+    try { 
 
-            client.wait(index * 1200);
+        command.execute(client, message, args, Embed); 
+
+    } catch (e) {
+            
+        message.channel.error(message, `Hay Aksi, bu komut çalıştırılırken bir hata oluştu. Botun yapımcıları durumla ilgilenecektir, lütfen biraz sonra tekrar deneyin!`, { react: true });
+        Owners.filter(owner => owner !== '').forEach(async (owner, index) => {
+
+            await client.wait(index * 500);
             client.users.cache.get(owner).send(`
-**${message.channel.toString()}** adlı kanalda \`${command.name}\` adlı komut kullanılırken hata oluştu !
+**${message.channel.toString()}** adlı kanalda \`${command.name}\` adlı komut kullanılırken hata oluştu!
 Komutu kullanan kişi : **${message.author.tag}** ( \`${message.author.id}\` )
-`);
+            `);
             for(let i = 0; i < Math.floor(e.stack.length / 2000); i++) {
                 client.users.cache.get(owner).send(e.stack.slice(0, 2000), { code: "js", split: true });
             };

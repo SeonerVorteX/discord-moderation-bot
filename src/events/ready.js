@@ -4,11 +4,13 @@ const { Prefix, VoiceChannel, Activity, Status } = client.settings;
 const { guildID, dmMessages, penals, registration } = client.guildSettings;
 const { jail, chatMute, voiceMute } = penals;
 const { unregisterRoles } = registration;
-const { jailed, unMuted, unCMuted } = require('../configs/emojis.json');
+const { jailed, unMuted, unCMuted, alarm, success } = require('../configs/emojis.json');
 const commands = require('../schemas/commands.js');
 const reload = require('../schemas/reload.js');
+const alarms = require('../schemas/alarms.js');
 const Penals = require('../schemas/penals.js');
 const embed = require('../utils/Embed.js');
+const ms = require('ms');
 const moment = require('moment');
 require('moment-duration-format');
 moment.locale('tr');
@@ -30,12 +32,12 @@ module.exports = async () => {
 //Voice 
     let channel = client.channels.cache.get(VoiceChannel);
     
-    if (!channel) console.log(`[VOICE-ERROR] Voice Channel Not Found`);
+    if (!channel) console.log(`[VOICE] Voice Channel Not Found`);
     else channel.join().then(connection => console.log(`[VOICE] Connected To The Voice Channel`)).catch(err => console.log(`[VOICE] Could Not Connect To Voice Channel`));
     
     setInterval(() => {
         
-        channel.join().then(connection => console.log(`[VOICE-REFRESH] Connection On Voice Channel Has Been Refreshed`)).catch(err => console.log(`[VOICE] Could Not Refresh Connection On Voice Channel`));
+        if(channel) channel.join().then(connection => console.log(`[VOICE] Connection On Voice Channel Has Been Refreshed`)).catch(err => console.log(`[VOICE] Could Not Refresh Connection On Voice Channel`));
         
     }, 600000);
 
@@ -47,17 +49,31 @@ module.exports = async () => {
         client.channels.cache.get(data.channelID).messages.fetch(data.messageID).then(async msg => {
 
             console.log('[BOT] Connection reloaded');
-            await msg.edit("**Yeniden Başlatıldı!**");
+            await msg.edit(`**Yeniden Başlatıldı** ${success ? success : ``}`);
             await reload.findOneAndDelete({ type: "moderation" });
 
         });
 
     };
 
-//Checking Penals
-
-    let Embed = embed(false, false, false);
+    //Checking Alarms
     let guild = client.guilds.cache.get(guildID);
+    setInterval(async () => {
+        
+        let Alarms = await alarms.find({ guildID: guild.id, finished: false });
+        if(Alarms.length) Alarms.filter(Alarm => Alarm.finishDate < Date.now()).forEach(async Alarm => {
+    
+            let alarmChannel = await guild.channels.cache.get(Alarm.channelID);
+            if(alarmChannel) alarmChannel.send(`${alarm ? alarm : `:alarm_clock:`} ${guild.members.cache.has(Alarm.userID) ? guild.members.cache.get(Alarm.userID).toString() : `<@${Alarm.userID}>`}, ${client.getTime(Date.now() - Alarm.startDate)} önce ${Alarm.reason ? `\`${Alarm.reason}\` sebebiyle` : `\`bilinmeyen\` bir nedenle`} alarm kurmuştun, Hatırladın mı?`);
+            Alarm.finished = true;
+            await Alarm.save();
+
+        });
+
+    }, 600000);
+
+//Checking Penals
+    let Embed = embed(false, false, false);
     setInterval(async () => {
         
         let datas = await Penals.find({ guildID: guild.id, active: true });
@@ -66,7 +82,7 @@ module.exports = async () => {
 
             datas.filter(data => data.finishDate && data.finishDate < Date.now()).forEach(async (data, index) => {
 
-                client.wait(index * 1000);
+                await client.wait(index * 1000);
                 
                 if(data.type == 'TEMP-JAIL') {
 
@@ -74,7 +90,7 @@ module.exports = async () => {
                     await data.save();
                     let user = await client.fetchUser(data.userID).then(user => user);
                     let member = guild.members.cache.get(user.id);
-                    let staff = await client.fetchUser(data.staff).then(user => user);
+                    let staff = await client.fetchUser(data.staffID).then(user => user);
                     let channel = client.channels.cache.get(jail.log);
                     if(member && guild.members.cache.has(user.id) && jail.jailRoles.some(role => member.roles.cache.has(role)) && member.manageable) member.roles.set(unregisterRoles);
                     if(jail.log && channel) channel.send(Embed.setColor('#00FF00').setAuthor(member.user.username, member.user.avatarURL({ dynamic: true })).setDescription(`
@@ -88,7 +104,7 @@ ${user.toString()} kullanıcısının **temp-jail** cezasının süresi bitti!
 **Jaillenme Sebebi :** \`${!data.reason ? 'Belirtilmedi!' : data.reason}\`
                     `));
 
-                    if(dmMessages) user.send(`${jailed} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} aldığınız **temp-jail** cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
+                    if(dmMessages) user.send(`${jailed ? jailed : ``} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} aldığınız **temp-jail** cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
 
                 };
 
@@ -98,7 +114,7 @@ ${user.toString()} kullanıcısının **temp-jail** cezasının süresi bitti!
                     await data.save();
                     let user = await client.fetchUser(data.userID).then(user => user);
                     let member = guild.members.cache.get(user.id);
-                    let staff = await client.fetchUser(data.staff).then(user => user);
+                    let staff = await client.fetchUser(data.staffID).then(user => user);
                     let channel = client.channels.cache.get(chatMute.log);
                     if(member && guild.members.cache.has(user.id) && chatMute.cmuteRoles.some(role => member.roles.cache.has(role)) && member.manageable) member.roles.remove(chatMute.cmuteRoles);
                     if(chatMute.log && channel) channel.send(Embed.setColor('#00FF00').setAuthor(member.user.username, member.user.avatarURL({ dynamic: true })).setDescription(`
@@ -112,7 +128,7 @@ ${user.toString()} kullanıcısının **metin kanallarında** olan susturulması
 **Susturulma Sebebi :** \`${!data.reason ? 'Belirtilmedi!' : data.reason}\`
                     `));
 
-                    if(dmMessages) user.send(`${unCMuted} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} **metin kanallarında** aldığınız susturulma cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
+                    if(dmMessages) user.send(`${unCMuted ? unCMuted : `:speech_balloon:`} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} **metin kanallarında** aldığınız susturulma cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
 
                 };
 
@@ -123,7 +139,7 @@ ${user.toString()} kullanıcısının **metin kanallarında** olan susturulması
                     await data.save();
                     let user = await client.fetchUser(data.userID).then(user => user);
                     let member = guild.members.cache.get(user.id);
-                    let staff = await client.fetchUser(data.staff).then(user => user);
+                    let staff = await client.fetchUser(data.staffID).then(user => user);
                     let channel = client.channels.cache.get(voiceMute.log);
                     if(member && guild.members.cache.has(user.id) && voiceMute.vmuteRoles.some(role => member.roles.cache.has(role)) && member.manageable) member.roles.remove(voiceMute.vmuteRoles);
                     if(voiceMute.log && channel) channel.send(Embed.setColor('#00FF00').setAuthor(member.user.username, member.user.avatarURL({ dynamic: true })).setDescription(`
@@ -137,7 +153,7 @@ ${user.toString()} kullanıcısının **ses kanallarında** olan susturulmasın�
 **Susturulma Sebebi :** \`${!data.reason ? 'Belirtilmedi!' : data.reason}\`
                     `));
 
-                    if(dmMessages) user.send(`${unMuted} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} **ses kanallarında** aldığınız susturulma cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
+                    if(dmMessages) user.send(`${unMuted ? unMuted : ``} \`${member.guild.name}\` sunucusunda, **${staff.tag}** tarafından, ${!data.reason ? '' : `\`${data.reason}\` sebebiyle`} **ses kanallarında** aldığınız susturulma cezasının süresi bitti! \`(Ceza ID : #${data.id})\``).catch(() => {});
 
                 };
 
@@ -148,30 +164,19 @@ ${user.toString()} kullanıcısının **ses kanallarında** olan susturulmasın�
     }, 30000);
 
 //Saving Commands
-    setTimeout(async () => {
-        
-        if(!guildID) return;
+    if(!guildID) return;
 
-        let index = 0;
-        let commandData = await commands.findOne({ guildID: guildID });
-        await client.commands.forEach(async command => {
+    let commandArray = new Array();
+    client.commands.forEach(async command => {
 
-            index += 1;
-            client.wait(index * 250);
+        commandArray.push(Prefix+command.name);
+        if(command.aliases) command.aliases.forEach(alias => commandArray.push(Prefix+alias));
+            
+    });
 
-            if(commandData && commandData.moderationCommands && commandData.moderationCommands.some(name => name == Prefix+command.name && command.aliases.every(alias => commandData.moderationCommands.some(Name => Name == Prefix+alias)))) return;
-
-            if(commandData && commandData.moderationCommands && commandData.moderationCommands.every(name => name !== Prefix+command.name)) await commands.findOneAndUpdate({ guildID: guildID }, { $push: { moderationCommands: Prefix+command.name } }, { upsert: true });
-            else if(!commandData || !commandData.moderationCommands.length) await commands.findOneAndUpdate({ guildID: guildID }, { $push: { moderationCommands: Prefix+command.name } }, { upsert: true });
-
-            if(commandData && commandData.moderationCommands && commandData.moderationCommands.length) command.aliases.filter(alias => !commandData.moderationCommands.some(name => name == Prefix+alias)).forEach(async alias => await commands.findOneAndUpdate({ guildID: guildID }, { $push: { moderationCommands: Prefix+alias } }, { upsert: true }));
-            else if(!commandData || !commandData.moderationCommands.length) command.aliases.forEach(async alias => await commands.findOneAndUpdate({ guildID: guildID }, { $push: { moderationCommands: Prefix+alias } }, { upsert: true }));
-
-        });
-        console.log(`[BOT] Commands Saved!`);
-
-    }, 5000);
-
+    await commands.findOneAndUpdate({ guildID: guildID }, { $set: { moderationCommands: commandArray } }, { upsert: true });
+    console.log(`[BOT] Commands Saved!`);
+    
 };
 
 module.exports.conf = {

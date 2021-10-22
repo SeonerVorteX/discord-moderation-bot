@@ -1,4 +1,4 @@
-const { guildTags } = global.client.guildSettings;
+const { guildTags, nameTag } = global.client.guildSettings;
 
 module.exports = {
     name: 'booster',
@@ -22,10 +22,10 @@ module.exports = {
 
         let name = args.slice(0).join(' ');
 
-        if(name.length > 25) return message.channel.error(message, `İsminiz 30 karakterden fazla olamaz!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
+        if(name.length > 25) return message.channel.error(message, `İsminiz 25 karakterden fazla olamaz!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
         if(guildTags.length) {
 
-            let displayName = message.member.displayName;
+            let displayName = message.member.displayName.replace(nameTag, '');
             guildTags.filter(tag => displayName.includes(tag)).forEach(tag => displayName = displayName.replace(tag, ''));
 
             if(name.trim() == displayName.trim()) return message.channel.error(message, `Sunucudaki ismin zaten böyle!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
@@ -33,8 +33,8 @@ module.exports = {
         } else if(message.member.displayName.trim() == name.trim()) return message.channel.error(message, `Sunucudaki ismin zaten böyle!`, { timeout: 10000, reply: true, react: true, keepMessage: true });
         if(message.member.manageable) {
 
-            message.channel.true(message, Embed.setDescription(`İsminiz başarıyla **${!guildTags[0] ? "" : guildTags[0]} ${name}** olarak değiştirildi`), { react: true, deleteMessage: 8000 });
-            message.member.setNickname(`${!guildTags[0] ? "" : guildTags[0]} ${name}`);
+            message.channel.success(message, Embed.setDescription(`İsminiz başarıyla **${!nameTag ? "" : nameTag} ${name}** olarak değiştirildi!`), { react: true, deleteMessage: 8000 });
+            message.member.setNickname(`${!nameTag ? "" : nameTag} ${name}`);
 
         } else message.channel.error(message, `Bu işlem için yeterli yetkim yok!`, { timeout: 10000, react: true, keepMessage: true });
 

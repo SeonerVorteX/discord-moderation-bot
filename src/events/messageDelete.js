@@ -31,20 +31,22 @@ module.exports = async (message) => {
             Embed
             .addFields(
                 { name: `Mesaj Sahibi`, value: message.author.toString(), inline: true },
-                { name: `Silen Kişi`, value: entry.executor.toString(), inline: true },
-                { name: `Kanal`, value: message.channel.toString(), inline: true },
-                { name: `Silinen Mesaj`, value: `\`${message.content}\``, inline: true },
+                { name: `Silindiği Kanal`, value: message.channel.toString(), inline: true },
+                { name: `Silen Yetkili`, value: entry.executor.toString(), inline: true },
+                { name: `Silinen Mesaj`, value: `${message.content ? `\`${message.content}\`` : `*Mesaj Yok*`}`, inline: true },
                 { name: `Mesaj ID`, value: `\`${message.id}\``, inline: true },
             )
-            .setThumbnail(entry.executor.avatarURL({ dynamic: true }))
+            .setThumbnail(message.author.avatarURL({ dynamic: true }))
             .setImage(message.attachments.first() ? message.attachments.first().proxyURL : ``)
             .setColor('#FF0000')
         );
 
     } else {
 
-        data.authorID = undefined;
-        data.save()
+        if(data) {
+            data.authorID = undefined;
+            data.save();
+        };
 
         if(messageLog && channel && channel.type == 'text') channel.send(
             Embed
@@ -52,14 +54,14 @@ module.exports = async (message) => {
                 { name: `Mesaj Sahibi`, value: message.author.toString(), inline: true },
                 { name: `Silindiği Kanal`, value: message.channel.toString(), inline: true },
                 { name: `Mesaj ID`, value: `\`${message.id}\``, inline: true },
-                { name: `Silinen Mesaj`, value: `\`${message.content}\``, inline: false },
+                { name: `Silinen Mesaj`, value: `${message.content ? `\`${message.content}\`` : `*Mesaj Yok*`}`, inline: false },
             )
             .setThumbnail(message.author.avatarURL({ dynamic: true }))
             .setImage(message.attachments.first() ? message.attachments.first().proxyURL : ``)
             .setColor('#FF0000')
         );
 
-    }
+    };
 
 };
 
