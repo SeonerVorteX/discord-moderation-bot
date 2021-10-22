@@ -8,16 +8,16 @@
     //General Settings
     client.settings = {
 
-        "Prefix": ".",
-        "Token": "",
-        "Owners": [],
-        "OtherBots": [],
-        "VoiceChannel": "",
-        "Activity": "LISTENING",
-        "Status": "idle",
-        "MongoURL": "",
-        "Footer": "SeonerVorteX",
-        "DisableCooldownsForAdmins": true,
+        Prefix: ".",
+        Token: "",
+        Owners: [],
+        OtherBots: [],
+        VoiceChannel: "",
+        Activity: "LISTENING",
+        Status: "idle",
+        MongoURL: "",
+        Footer: "SeonerVorteX",
+        DisableCooldownsForAdmins: true,
 
     };
 
