@@ -17,9 +17,9 @@ require('./src/handlers/eventHandler.js');
 readdirSync('./src/commands').filter(async dir => {
   const commandFiles = readdirSync(`./src/commands/${dir}/`).filter(file => file.endsWith('.js'));
   for (const file of commandFiles) {
-	  const command = require(`./src/commands/${dir}/${file}`);
-	  await client.commands.set(command.name, command);
-	  // console.log(`[COMMAND] ${command.name} Loaded!`);
+    const command = require(`./src/commands/${dir}/${file}`);
+    await client.commands.set(command.name, command);
+    // console.log(`[COMMAND] ${command.name} Loaded!`);
   }
 });
 
