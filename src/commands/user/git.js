@@ -1,4 +1,4 @@
-﻿const { voiceLog } = logs;
+﻿const { voiceLog } = lobal.client.guildSettings.logs;
 const { changeState } = require('../../configs/emojis.json');
 
 module.exports = {

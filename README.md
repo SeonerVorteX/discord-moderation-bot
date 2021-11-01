@@ -14,6 +14,15 @@
 * Daha sonra editörünüzün terminalini yada klasörünuzun bulunduğu dizinde `cmd` veya `powershell` penceresini açın.
 * Ve `npm i` yazarak otomatik olarak gerekli tüm modülleri indirin.
 * Bu işlem de bittikten sonra pencerede `node .` veya `npm start` yazarak botunuzu çalıştırın!
+## Glitch kullanıcıları için :
+* Glitch platformunda `New Project` butonuna tıklayın, çıkan seçimler arasında en aşağıda bulunan `Import from GitHub` seçeneğine tıklayıp çıkan pencereye bu Altyapının linkini girin ve Tamam'a tıklayın!
+* `package.json` dosyasını Glitch'e uygun olarak değiştirin!
+* Ve bir kaç sistem hatası almamak için `package.json` dosyasına aşağıdaki kodu girin :
+```json
+"engines" : {
+    "node": "12.x"
+}
+```
 
 # ⚙️ Ayarlar
 ### Botunuzun doğru ve hatasız çalışması için `settings.js` dosyasını doğru bir şekilde doldurmanız gerekiyor. Aşağıdaki yönlendirmeleri takip ederek bazı ayarları yapabilirsiniz :
@@ -23,6 +32,7 @@
 * Altyapıdaki komutların çoğunda yavaş mod mevcuttur ve bunu **Sunucu Yöneticisi** ve **Bot Altı Yönetici** yetkisine sahip yetkililere kapatmak için `client.settings.DisableCooldownsForAdmins` kısmını aktif hale getirebilirsiniz.
 * `client.systemEmojis` dizini botunuzun kullanmak için sunucunuza kuracağı emoji bilgilerini gösteriyor. Dizine belirtilen şekilde yeni emoji bilgileri ekleyerek belirttiğiniz emojilerinde sunucunuza kurulmasını sağlaya bilirsiniz. Bu emojilerin kurulması için botunuzu aktifleşdirdikten sonra **Emojikur** komutunu kullanmanız gerekmektedir.
     * Bilgi: **Emojikur** komutunu kullandıktan sonra botunuz emojileri sunucuya kurar ve `src/configs/emojis.json` dosyasına kaydeder. Gerektiği zaman da bu dosyadan alıp kullanır ve sizde tüm emojileri `<:name:id>` şeklinde botunuza kaydetme zahmetinden kurtulursunuz.
+    * Not: Bazı kullanıcılarda emojiler `src/configs/emojis.json` dosyasına kaydedilmeye bilir, bu durumda Emojikur komutunu kullandıktan sonra `eval JSON.stringify(emojis, null, 2)` komutunu çalıştırarak çıkan sonucu dosyaya yapıştırarak sorunu hall edebilirsiniz.
     * Not: `src/configs/emojis.json` dosyasında discordun birkaç varsayılan emojileride hazır bulunmaktadır.
 * `client.guildSettings.guildTags` dizinine sunucunuzun taglarını, `client.guildSettings.guildDiscriminator` kısmına ise sunucunuzun etiket tagını *(#0000 gibi ve eğer varsa)*  **#** olmadan girmelisiniz.
     * Not: Sunucunuzda etiket tagı kullanmıyorsanız **guildDiscriminator** kısmını silmenize gerek yok. Boş bırakıp botunuza etiket tagınızın olmadığını belirtmelisiniz.
