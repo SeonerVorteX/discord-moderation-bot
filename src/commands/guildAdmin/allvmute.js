@@ -55,7 +55,7 @@ module.exports = {
 
                     });
 
-                    await client.wait(totalMembers * 1000).then(() => resolve());
+                    await client.wait(totalMembers * 1000).then(resolve);
                     msg.edit(Embed.setDescription(`${success ? success : ``} ${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} **susturuldu!**`));
 
                 });
@@ -96,7 +96,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(totalMembers * 1000).then(() => resolve());
+                        await client.wait(totalMembers * 1000).then(resolve);
                         msg.edit(Embed.setDescription(`${success ? success : ``} ${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} **susturuldu!**`));
 
                     });
@@ -135,7 +135,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(totalMembers * 1000).then(() => resolve());
+                        await client.wait(totalMembers * 1000).then(resolve);
                         msg.edit(Embed.setDescription(`${success ? success : ``} ${channel.toString()} adlı ses kanalındaki **${totalMembers}** üye ${!reason ? '' : `\`${reason}\` nedeniyle`} **susturuldu!**`));
 
                     });

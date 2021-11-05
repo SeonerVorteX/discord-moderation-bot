@@ -51,7 +51,7 @@ module.exports = {
                     };
 
                 });
-                await client.wait(memberSize * 250).then(() => resolve());
+                await client.wait(memberSize * 250).then(resolve);
 
             });
 

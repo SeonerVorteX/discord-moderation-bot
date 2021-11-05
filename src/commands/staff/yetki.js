@@ -164,7 +164,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(size * 500).then(() => resolve());
+                        await client.wait(size * 500).then(resolve);
 
                     });
                     
@@ -202,7 +202,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(size * 500).then(() => resolve());
+                        await client.wait(size * 500).then(resolve);
 
                     });
                     
@@ -273,7 +273,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(size * 500).then(() => resolve());
+                        await client.wait(size * 500).then(resolve);
 
                     });
                     
@@ -311,7 +311,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(size * 500).then(() => resolve());
+                        await client.wait(size * 500).then(resolve);
 
                     });
                     

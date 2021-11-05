@@ -83,7 +83,7 @@ module.exports = {
 
                     });
 
-                    await client.wait(channel.members.filter(member => !Owners.includes(member.user.id) && !member.hasPermission(8)) * 300).then(() => resolve());
+                    await client.wait(channel.members.filter(member => !Owners.includes(member.user.id) && !member.hasPermission(8)) * 300).then(resolve);
 
                 });
 

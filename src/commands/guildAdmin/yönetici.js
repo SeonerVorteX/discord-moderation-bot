@@ -56,7 +56,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(roles.size * 1000).then(() => resolve());
+                        await client.wait(roles.size * 1000).then(resolve);
                         msg.edit(Embed.setDescription(`${success ? success : ``} ${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **alındı!**`));
 
                     });
@@ -84,7 +84,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(members.size * 1000).then(() => resolve());
+                        await client.wait(members.size * 1000).then(resolve);
 
                     });
                     msg.edit(Embed.setDescription(`${success ? success : ``} ${role.toString()} adlı roldeki üyelerin yönetici yetkisi ${reason ? `\`${reason} nedeniyle\`` : ``} **alındı!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
@@ -131,7 +131,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(data.userRoles.length * 1000).then(() => resolve());
+                        await client.wait(data.userRoles.length * 1000).then(resolve);
                         await administrators.findOneAndDelete({ guildID: message.guild.id, userID: user.id, type: user.user.bot ? 'BOT' : 'MEMBER' });
                         msg.edit(Embed.setDescription(`${success ? success : ``} ${user.toString()} isimli ${user.user.bot ? `botun` : `üyenin`} yönetici yetkisi ${reason ? `\`${reason}\` nedeniyle` : ``} **geri verildi!**`));
 
@@ -169,7 +169,7 @@ module.exports = {
                         if(!role.permissions.has(8)) role.setPermissions(8);
 
                         await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: 'ROLE' });
-                        await client.wait(members.size * 1000).then(() => resolve());
+                        await client.wait(members.size * 1000).then(resolve);
 
                     });
                     msg.edit(Embed.setDescription(`${success ? success : ``} ${role.toString()} adlı yönetici rolü ${reason ? `\`${reason}\` nedeniyle` : ``} üyelerine **geri verildi!** Rolde toplam **${role.members.size}** kişi bulunuyor`));
@@ -215,7 +215,7 @@ module.exports = {
 
                         });
 
-                        await client.wait(message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).size * 1000).then(() => resolve());
+                        await client.wait(message.guild.roles.cache.filter(role => role.permissions.has(8) && ((role.members.size == 1 && role.members.first().user.bot && role.position < message.guild.members.cache.get(client.user.id).roles.highest.position && role.members.first().user.id !== client.user.id) || role.editable)).size * 1000).then(resolve);
 
                     });
                     msg.edit(Embed.setDescription(`${success ? success : ``} Sunucudaki **${members.size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **kapatıldı!**`));
@@ -267,7 +267,7 @@ module.exports = {
                             await administrators.findOneAndDelete({ guildID: message.guild.id, roleID: role.id, type: "CLOSED-ROLE" });
 
                         });
-                        await client.wait(datas.length * 1000).then(() => resolve());
+                        await client.wait(datas.length * 1000).then(resolve);
                         msg.edit(Embed.setDescription(`${success ? success : ``} Sunucudaki **${size}** rolün yönetici yetkisi ${message.author.toString()} tarafından ${reason ? `\`${reason}\` nedeniyle` : ``} **açıldı!**`));
                         
                     });
@@ -296,7 +296,7 @@ module.exports = {
 
                     });
 
-                    await client.wait(roles.size * 100).then(() => resolve());
+                    await client.wait(roles.size * 100).then(resolve);
 
                 });
                 message.channel.success(message, Embed.setDescription(`
@@ -324,7 +324,7 @@ Toplam **${roles.size}** yönetici yetkisine sahip bot rolü ve **${message.guil
                         description.push(`**[\`${index}\`]** ${role.toString()} : Role sahip toplam üye **${role.members.size}**`);
 
                     });
-                    await client.wait(roles.size * 100).then(() => resolve());
+                    await client.wait(roles.size * 100).then(resolve);
 
                 });
                 message.channel.success(message, Embed.setDescription(`

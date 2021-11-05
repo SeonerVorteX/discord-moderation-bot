@@ -39,7 +39,7 @@ module.exports = {
                     
                 });
 
-                await client.wait(systemEmojis.filter(systemEmoji => !emojis[systemEmoji.emojiName]).length * 250).then(() => resolve())
+                await client.wait(systemEmojis.filter(systemEmoji => !emojis[systemEmoji.emojiName]).length * 250).then(resolve)
                 
             });
 

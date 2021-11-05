@@ -158,7 +158,7 @@ ${forbiddenMembers.size < 10 && forbiddenMembers.size ? `\`>\` **Taga sahip kiş
                     description.push(`**[\`${index+1}\`]** Toplam **${forbiddenMembers.size}** kişide \`${tag}\` tagı bulunuyor!`);
                     
                 });
-                await client.wait(data.forbiddenTags.length * 300).then(() => resolve());
+                await client.wait(data.forbiddenTags.length * 300).then(resolve);
 
             });
             

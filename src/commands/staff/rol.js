@@ -69,7 +69,7 @@ module.exports = {
                             await new roleLog({ guildID: message.guild.id, staffID: message.author.id, userID: member.id, roleID: role.id, date: Date.now(), type: 'ROLE-ADD' }).save();
 
                         });
-                        await client.wait(size * 250).then(() => resolve());
+                        await client.wait(size * 250).then(resolve);
 
                     });
 
@@ -102,7 +102,7 @@ module.exports = {
                             await new roleLog({ guildID: message.guild.id, staffID: message.author.id, userID: member.id, roleID: role.id, date: Date.now(), type: 'ROLE-ADD' }).save();
 
                         });
-                        await client.wait(size * 250).then(() => resolve());
+                        await client.wait(size * 250).then(resolve);
 
                     });
 
@@ -158,7 +158,7 @@ module.exports = {
                             await new roleLog({ guildID: message.guild.id, staffID: message.author.id, userID: member.id, roleID: role.id, date: Date.now(), type: 'ROLE-REMOVE' }).save();
 
                         });
-                        await client.wait(size * 250).then(() => resolve());
+                        await client.wait(size * 250).then(resolve);
 
                     });
 
@@ -191,7 +191,7 @@ module.exports = {
                             await new roleLog({ guildID: message.guild.id, staffID: message.author.id, userID: member.id, roleID: role.id, date: Date.now(), type: 'ROLE-REMOVE' }).save();
 
                         });
-                        await client.wait(size * 250).then(() => resolve());
+                        await client.wait(size * 250).then(resolve);
 
                     });
 

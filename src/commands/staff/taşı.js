@@ -87,7 +87,7 @@ module.exports = {
 
                     });
 
-                    await client.wait(channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).size * 500).then(() => resolve())
+                    await client.wait(channel.members.filter(member => !Owners.includes(member.user.id) && ((member.hasPermission(8) && member.user.bot && !OtherBots.includes(member.user.id)) && member.user.id !== client.user.id || !member.hasPermission(8))).size * 500).then(resolve)
 
                 });
 

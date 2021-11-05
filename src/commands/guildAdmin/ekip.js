@@ -51,7 +51,7 @@ ${crown2 ? crown2 : ``}  Yetkili Üye : **${staffMembers.size}**
 
                 };
 
-                await client.wait(guildTeams.length * 300).then(() => resolve());
+                await client.wait(guildTeams.length * 300).then(resolve);
 
             });
 
