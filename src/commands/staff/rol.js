@@ -7,7 +7,7 @@ module.exports = {
     name: 'rol',
     aliases: ['role'],
     category: 'Yetkili',
-    usage: '[ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <@Rol/Rol İsmi/ID>',
+    usage: '[ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <Rol İsmi/ID>',
     permission: 'MANAGE_ROLES',
     guildOnly: true,
     cooldown: 5,
@@ -21,17 +21,17 @@ module.exports = {
 
     async execute(client, message, args, Embed) {
 
-        if(!args[0]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}rol [ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <@Rol/Rol İsmi/ID>\``), { timeout: 10000, react: true });
+        if(!args[0]) return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}rol [ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <Rol İsmi/ID>\``), { timeout: 10000, react: true });
 
         if(['ver'].some(arg => args[0].toLocaleLowerCase() == arg)) {
 
             let user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
             let publicRole = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
             let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[2]) || message.guild.roles.cache.find(role => role.name == args.slice(2).join(' '));
+            let role = message.guild.roles.cache.get(args[2]) || message.guild.roles.cache.find(role => role.name == args.slice(2).join(' '));
 
             if(!args[1]) return message.channel.error(message, Embed.setDescription(`Bir üye, rol veya ses kanalı belirtmelisin!`), { timeout: 8000, react: true });
-            if(!user && !publicRole && !channel) return message.channel.error(message, Embed.setDescription(`${mark} Doğru kullanım : \`${Prefix}rol ver [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <@Rol/Rol İsmi/ID>\``), { timeout: 10000, react: true });
+            if(!user && !publicRole && !channel) return message.channel.error(message, Embed.setDescription(`${mark} Doğru kullanım : \`${Prefix}rol ver [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <Rol İsmi/ID>\``), { timeout: 10000, react: true });
             if(!args[2]) return message.channel.error(message, Embed.setDescription(`Verilecek rolü belirtmelisin!`), { timeout: 8000, react: true });
             if(!role) return message.channel.error(message, Embed.setDescription(`Geçerli bir rol belirtmelisin!`), { timeout: 8000, react: true });
             if(role.members.size == 1 && role.members.first().user.bot && !role.editable) return message.channel.error(message, `Public bir rol belirtmelisin!`, { timeout: 8000, react: true });
@@ -117,10 +117,10 @@ module.exports = {
             let user = message.mentions.members.first() || message.guild.members.cache.get(args[1]);
             let publicRole = message.mentions.roles.first() || message.guild.roles.cache.get(args[1]);
             let channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[1]);
-            let role = message.mentions.roles.first() || message.guild.roles.cache.get(args[2]) || message.guild.roles.cache.find(role => role.name == args.slice(2).join(' '));
+            let role = message.guild.roles.cache.get(args[2]) || message.guild.roles.cache.find(role => role.name == args.slice(2).join(' '));
 
             if(!args[1]) return message.channel.error(message, Embed.setDescription(`Bir üye, rol veya ses kanalı belirtmelisin!`), { timeout: 8000, react: true });
-            if(!user && !publicRole && !channel) return message.channel.error(message, Embed.setDescription(`${mark} Doğru kullanım : \`${Prefix}rol al [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <@Rol/Rol İsmi/ID>\``), { timeout: 10000, react: true });
+            if(!user && !publicRole && !channel) return message.channel.error(message, Embed.setDescription(`${mark} Doğru kullanım : \`${Prefix}rol al [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <Rol İsmi/ID>\``), { timeout: 10000, react: true });
             if(!args[2]) return message.channel.error(message, Embed.setDescription(`Alınacak rolü belirtmelisin!`), { timeout: 8000, react: true });
             if(!role) return message.channel.error(message, Embed.setDescription(`Geçerli bir rol belirtmelisin!`), { timeout: 8000, react: true });
             if(role.members.size == 1 && role.members.first().user.bot && !role.editable) return message.channel.error(message, `Public bir rol belirtmelisin!`, { timeout: 8000, react: true });
@@ -201,7 +201,7 @@ module.exports = {
 
             };
 
-        } else return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}rol [ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <@Rol/Rol İsmi/ID>\``), { timeout: 10000, react: true });
+        } else return message.channel.error(message, Embed.setDescription(`${mark ? mark : ``}  Doğru kullanım : \`${Prefix}rol [ver / al] [<@Üye/ID> / <@Rol/ID> / <#Kanal/ID>] <Rol İsmi/ID>\``), { timeout: 10000, react: true });
 
     },
 };
