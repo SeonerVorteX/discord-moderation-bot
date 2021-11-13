@@ -15,9 +15,11 @@ module.exports = {
 
     execute(client, message, args, Embed) {
 
-        let user = message.mentions.users.first() || message.guild.members.cache.get(args[0]) || message.author;
+        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.author;
+      
+        if(!user.user.avatar) return message.channel.error(message, `${user.user.id == message.author.id ? 'Maalesef sizin bir avatarınız yok!' : 'Belirtilen kullanıcı bir avatara sahip değil!'}`, { react: true });
 
-        message.channel.success(message, Embed.setFooter(``).setAuthor(user.username, client.user.avatarURL()).setImage(user.avatarURL({ dynamic: true, size: 256 })), { react: true });
+        message.channel.success(message, Embed.setFooter(``).setAuthor(user.user.username, client.user.avatarURL()).setImage(user.user.avatarURL({ dynamic: true, size: 256 })), { react: true });
 
     },
 };
