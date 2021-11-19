@@ -17,7 +17,7 @@ module.exports = {
 
     async execute(client, message, args) {
 
-        let members = message.guild.members.cache.filter(member => !member.user.bot && (staffRoles.some(role => member.roles.cache.has(role)) || transporterSpears.some(role => member.roles.cache.has(role)) || registerSpears.some(role => member.roles.cache.has(role)) || member.roles.cache.has(botYt) || member.hasPermission('MANAGE_ROLES')) && member.user.presence.status !== 'offline');
+        let members = message.guild.members.cache.filter(member => !member.user.bot && !member.voice.channel && (staffRoles.some(role => member.roles.cache.has(role)) || transporterSpears.some(role => member.roles.cache.has(role)) || registerSpears.some(role => member.roles.cache.has(role)) || member.roles.cache.has(botYt) || member.hasPermission('MANAGE_ROLES')) && member.user.presence.status !== 'offline');
         
         if(args[0] && ['dm', 'dm-at'].some(arg => args[0].toLowerCase() == arg)) {
             
