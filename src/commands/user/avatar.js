@@ -15,7 +15,7 @@ module.exports = {
 
     execute(client, message, args, Embed) {
 
-        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.author;
+        let user = message.mentions.members.first() || message.guild.members.cache.get(args[0]) || message.member;
       
         if(!user.user.avatar) return message.channel.error(message, `${user.user.id == message.author.id ? 'Maalesef sizin bir avatarınız yok!' : 'Belirtilen kullanıcı bir avatara sahip değil!'}`, { react: true });
 
