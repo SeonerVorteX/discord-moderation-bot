@@ -13,7 +13,6 @@ const administrators = require('../../schemas/administrators.js');
 const penalPoints = require('../../schemas/penalPoints.js');
 const voiceJoinedAt = require('../../schemas/voiceJoinedAt.js');
 const emojis = require('../../configs/emojis.json');
-const table = require('table');
 const fs = require('fs');
 const ms = require('ms');
 const moment = require('moment');
