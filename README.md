@@ -1,8 +1,12 @@
 # 📌 Görseller
+<img src="https://media.discordapp.net/attachments/826000647995392001/924005133401096232/unknown.png">
+<img src="https://media.discordapp.net/attachments/826000647995392001/924000693617049600/unknown.png?width=466&height=411">
+<img src="https://media.discordapp.net/attachments/826000647995392001/924005876493353050/unknown.png?width=550&height=411">
+<img src="https://media.discordapp.net/attachments/826000647995392001/924005995305390141/unknown.png?width=509&height=411">
+<img src="https://media.discordapp.net/attachments/826000647995392001/924004302295552070/unknown.png">
 <img src="https://media.discordapp.net/attachments/836467887928639498/892154099414482995/unknown.png">
 <img src="https://media.discordapp.net/attachments/836467887928639498/892154477719740437/unknown.png">
 <img src="https://media.discordapp.net/attachments/836467887928639498/892158116404269106/unknown.png">
-<img src="https://media.discordapp.net/attachments/836467887928639498/892161948114911262/unknown.png">
 
 # ✨ Kurulum
 ### Projeyi botunuzda kullanmak için bazı işlemler yapmanız gerekiyor. Aşağıdaki yönlendirmeleri takip ederek bunu yapabilirsiniz :
