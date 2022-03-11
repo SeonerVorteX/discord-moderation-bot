@@ -4,7 +4,7 @@
   "description": "Gelişmiş Discord Moderasyon Botu",
   "main": "vortex.js",
   "scripts": {
-    "test": "node vortex.js",
+    "start": "node vortex.js",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "prettier": "prettier --write src/**/*.js"
