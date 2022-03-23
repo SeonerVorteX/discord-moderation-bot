@@ -35,7 +35,7 @@ module.exports = {
 ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 
 **Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafen ? unDeafen : ``}`}
 **Veri Bilgilerin :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` sestesin!`}
             `), { react: true });
 
@@ -52,7 +52,7 @@ ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 
 **Mikrofonun :** ${message.member.voice.selfMute || message.member.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Kulaklığın :** ${message.member.voice.selfDeaf || message.member.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafen ? unDeafen : ``}`}
 **Veri Bilgilerin :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` sestesin!`}
                 `), { react: true });
 
@@ -67,7 +67,7 @@ ${message.member.voice.channel.toString()} adlı ses kanalınaki bilgilerin :
 ${user.toString()} isimli kullanıcının sesteki bilgileri :
 
 **Kullanıcının Mikrofonu :** ${user.voice.selfMute || user.voice.serverMute ? `Kapalı ${muted ? muted : ``}` : `Açık ${unMuted ? unMuted : ``}`}
-**Kullanıcının Kulaklığı :** ${user.voice.selfDeaf || user.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafed ? unDeafed : ``}`}
+**Kullanıcının Kulaklığı :** ${user.voice.selfDeaf || user.voice.serverDeaf ? `Kapalı ${deafen ? deafen : ``}` : `Açık ${unDeafen ? unDeafen : ``}`}
 **Veri Bilgileri :** ${!voiceData ? `\`Veri Bulunamadı!\`` : `Toplam \`${await client.duration(Date.now() - voiceData.date)}dir\` seste!`}
                 `), { react: true });
 
