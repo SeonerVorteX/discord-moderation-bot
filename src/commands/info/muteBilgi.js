@@ -1,7 +1,7 @@
 const { Owners } = global.client.settings;
 const { unAuthorizedMessages, botYt, penals } = global.client.guildSettings;
 const { staffs, cmuteRoles } = penals.chatMute;
-const { vmuteRoles } = penals.chatMute;
+const { vmuteRoles } = penals.voiceMute;
 const Penals = require('../../schemas/penals.js');
 const moment = require('moment');
 require('moment-duration-format');

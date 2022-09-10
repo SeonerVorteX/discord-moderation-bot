@@ -22,7 +22,7 @@ module.exports = async (message) => {
     let audit = await message.guild.fetchAuditLogs();
     let entry = audit.entries.first();
 
-    if(entry && entry.action == 'MESSAGE_DELETE' && entry.extra.channel.id == message.channel.id && entry.target.id == message.author.id && !OtherBots.includes(entry.executor.id) && entry.executor.id !== client.user.id) {
+    if(data && entry && entry.action == 'MESSAGE_DELETE' && entry.extra.channel.id == message.channel.id && entry.target.id == message.author.id && !OtherBots.includes(entry.executor.id) && entry.executor.id !== client.user.id) {
 
         data.authorID = entry.executor.id;
         data.save(); 

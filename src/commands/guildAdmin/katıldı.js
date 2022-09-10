@@ -63,6 +63,8 @@ module.exports = {
 
         } else if(['al'].some(arg => args[0].toLowerCase() == arg)) {
 
+            if(!meetRole || !message.guild.roles.cache.has(meetRole)) return message.channel.error(message, Embed.setDescription(`Katıldı rolü ayarlanmamış. Lütfen botun yapımcısıyla iletişime geçin!`), { timeout: 8000, react: true });
+
             if(mark) message.react(mark)
             let members = message.guild.members.cache.filter(member => member.roles.cache.has(meetRole));
             message.channel.send(Embed.setDescription(`**${members.size}** üyeden ${message.guild.roles.cache.get(meetRole).toString()} rolü **alınmaya** başlandı ${loading ? loading : ''}`)).then(async msg => {
@@ -78,7 +80,7 @@ module.exports = {
                         await new roleLog({ guildID: message.guild.id, staffID: message.author.id, userID: member.id, roleID: meetRole, date: Date.now(), type: 'ROLE-REMOVE' }).save();
     
                     });
-                    await client.wait(message.member.voice.channel.members.size * 300).then(resolve);
+                    await client.wait(members.size * 300).then(resolve);
 
                 });
 
