@@ -27,7 +27,7 @@
     "fs": "0.0.1-security",
     "moment": "^2.29.1",
     "moment-duration-format": "^2.3.2",
-    "mongoose": "^5.13.7",
+    "mongoose": "^5.13.15",
     "ms": "^2.1.3"
   },
   "devDependencies": {
