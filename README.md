@@ -1,12 +1,3 @@
-# 📌 Görseller
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226863466401497159/image.png?ex=662650a4&is=6613dba4&hm=3e19e3e0039b6ca1eff0261b6454f79a818a8a7fc9ece7e0968a1531ed12b04d&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226863591311802389/image.png?ex=662650c2&is=6613dbc2&hm=fbb32ca6b418000e660dda5427d92cde2df07f090e0bb03149b6143f6588107c&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226863652301176912/image.png?ex=662650d0&is=6613dbd0&hm=685f25a1fec8d42a955e03d573fa6d5f9517c6191b9aceaa8d862494b61cc581&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226863731330388060/image.png?ex=662650e3&is=6613dbe3&hm=e3a1a95e01e9489c67d11683a660abe6472a7921b3c54c819a56922db3da5a82&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226865195671093378/image.png?ex=66265240&is=6613dd40&hm=6be9843efdd96cc23858955c96c2e910137603a7a122ac7047da491145356eab&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467887928639498/1226867295138087015/image.png?ex=66265435&is=6613df35&hm=f53914352ee15c05b738bffd3c9c63e5dad916ab2f8561e269577ef6263a38f6&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467895156211772/1226864630220197958/image.png?ex=662651b9&is=6613dcb9&hm=92821f52f6a8a4004145201e978e5dbddfea085bf60d0f6455a5660fd59a1658&=&format=webp">
-<img src="https://media.discordapp.net/attachments/836467895156211772/1226864780367757435/image.png?ex=662651dd&is=6613dcdd&hm=214f00fb3e4e9169d3e56dad816648e1055ad1ca8cd503874505bc84a9304015&=&format=webp">
 
 # ✨ Kurulum
 ### Projeyi botunuzda kullanmak için bazı işlemler yapmanız gerekiyor. Aşağıdaki yönlendirmeleri takip ederek bunu yapabilirsiniz :
